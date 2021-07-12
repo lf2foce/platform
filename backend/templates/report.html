@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+<script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous">
+</script>
+<style>
+body {
+  background-color: #f8f9fa;
+}
+.card {
+    border-color: white;
+    border-radius: 16px;
+}
+
+
+h1 {
+  text-align: center;
+  font-weight: 100;
+}
+
+</style>
+
+{%endblock%}
+
+{%block content%}
+
+        
+    <h1 class="display-6 m-3">Task processing</h1>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card  p-3 mb-4">
+          <div id="myDiv"></div> <!-- done -->
+        </div> 
+      </div>
+      <div class="col-md-6">
+        <div class="card  p-3 mb-4">
+          <div id="myDiv2"></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card  p-3 mb-4">
+          <div id="myDivScatter"></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card  p-3 mb-4">
+          <div id="myDivBar"></div>
+        </div>
+      </div>
+
+    </div>
+    
+    <!-- <div class="row">
+        <div class="col-md-6">
+          <div class="card border-warning pb-3">
+            <div id="myDiv"></div> 
+          </div>  
+          
+          <div class="card border-warning pb-3">
+            <div id="myDiv2"></div>
+          </div>
+        
+        </div>
+        
+        <div class="col-md-6">
+          <div id="myDivScatter"></div> 
+          <div id="myDivBar"></div> 
+        </div>
+
+    </div> -->
+ 
+
+    <div class="col-12">
+        
+            
+    </div>
+    
+    <div class="col-12">
+            
+        
+    </div>
+        
+    
+  
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script>
+      var data = [{
+        values: [19, 26, 55],
+        labels: ['Residential', 'Non-Residential', 'Utility'],
+        type: 'pie'
+      }];
+
+      var layout = {
+          title: 'Chart Studio ',
+          margin: {
+          l: 10,
+          r: 10
+        }
+      };
+
+      var config = {
+        showEditInChartStudio: true,
+        plotlyServerURL: "https://chart-studio.plotly.com",
+        responsive: true
+      };
+
+      Plotly.newPlot('myDiv2', data, layout, config);
+    </script>
+    
+    <script>
+    
+      var trace1 = {
+        x: [0, 1, 2, 3, 4, 9],
+        y: [1, 5, 3, 7, 5, 10],
+        mode: 'lines',
+        line: {
+            color: '#C8A2C8',
+            width: 3,
+            shape: 'spline'
+        }
+      };
+    
+      var trace2 = {
+        x: [1, 2, 3, 4, 5],
+        y: [4, 0, 4, 6, 8],
+        type: 'scatter',
+        line: {
+            dash: 'dashdot',
+            shape: 'spline'
+        }
+      };
+      var trace3 = {
+        x: [1, 2, 4, 5, 7, 11],
+        y: [0, 1, 3, 6, 8, 10],
+        mode: 'lines',
+        line: {
+            width: 4
+        }
+            
+      };
+    
+      var data = [trace1, trace2, trace3];
+      var layout = {
+        title: 'Line Chart',
+        margin: {
+          l: 30,
+          r: 5
+        },
+        legend: {"orientation": "h"}          
+    };
+    
+      Plotly.newPlot('myDiv', data, layout, {responsive: true}); //, editable: true
+    </script>
+    
+    <script>
+      var trace1 = {
+          type: 'bar',
+          x: [1, 2, 3, 4, 8],
+          y: [5, 10, 2, 7, 10],
+          marker: {
+              color: '#C8A2C8',
+              line: {
+                  width: 2
+              }
+          }
+      };
+    
+      var data = [ trace1 ];
+    
+      var layout = {
+        title: 'Responsive to window size!',
+        //font: {size: 18}
+        margin: {
+          l: 30,
+          r: 5
+        },
+      };
+    
+      Plotly.newPlot('myDivBar', data, layout, {responsive: true});
+    </script>
+    
+
+    <script>
+      var trace1 = {
+      x: [52698, 43117],
+      y: [53, 31],
+      mode: 'markers',
+      name: 'North America',
+      text: ['United States', 'Canada'],
+      marker: {
+        color: 'rgb(164, 194, 244)',
+        size: 12,
+        line: {
+          color: 'white',
+          width: 0.5
+        }
+      },
+      type: 'scatter'
+    };
+    
+    var trace2 = {
+      x: [39317, 37236, 35650, 30066, 29570, 27159, 23557, 21046, 18007],
+      y: [33, 20, 13, 19, 27, 19, 49, 44, 38],
+      mode: 'markers',
+      name: 'Europe',
+      text: ['Germany', 'Britain', 'France', 'Spain', 'Italy', 'Czech Rep.', 'Greece', 'Poland'],
+      marker: {
+        color: 'rgb(255, 217, 102)',
+        size: 12
+      },
+      type: 'scatter'
+    };
+    
+    var trace3 = {
+      x: [42952, 37037, 33106, 17478, 9813, 5253, 4692, 3899],
+      y: [23, 42, 54, 89, 14, 99, 93, 70],
+      mode: 'markers',
+      name: 'Asia/Pacific',
+      text: ['Australia', 'Japan', 'South Korea', 'Malaysia', 'China', 'Indonesia', 'Philippines', 'India'],
+      marker: {
+        color: 'rgb(234, 153, 153)',
+        size: 12
+      },
+      type: 'scatter'
+    };
+    
+    var trace4 = {
+      x: [19097, 18601, 15595, 13546, 12026, 7434, 5419],
+      y: [43, 47, 56, 80, 86, 93, 80],
+      mode: 'markers',
+      name: 'Latin America',
+      text: ['Chile', 'Argentina', 'Mexico', 'Venezuela', 'Venezuela', 'El Salvador', 'Bolivia'],
+      marker: {
+        color: 'rgb(142, 124, 195)',
+        size: 12
+      },
+      type: 'scatter'
+    };
+    
+    var data = [trace1, trace2, trace3, trace4];
+    
+    var layout = {
+      title: 'Quarter 1 Growth',
+      xaxis: {
+        title: 'GDP per Capita',
+        showgrid: true,
+        zeroline: false,
+        automargin: true,
+      },
+      yaxis: {
+        title: 'Percent',
+        showline: false
+      },
+      margin: {
+          l: 40,
+          r: 0,
+         
+          pad: 4
+        },
+        legend: {
+          x: 1,
+          xanchor: 'right',
+          y: 1
+        },
+      //paper_bgcolor: '#c7c7c7',
+      //plot_bgcolor: '#c7c7c7'  
+      
+    };
+    
+    Plotly.newPlot('myDivScatter', data, layout, {responsive: true});
+    </script>
+
+{%endblock%}
