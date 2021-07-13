@@ -4,9 +4,6 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 
 
-
-#bổ sung 
-
 class TimeStampMixin(object):
     """Timestamping mixin"""
 

@@ -19,10 +19,6 @@ templates = Jinja2Templates(directory="templates")
 
 app.include_router(user_router)
 
-
-
-
-
 @app.get("/dashboard", response_class=HTMLResponse)
 def dashboard(request: Request):
     return templates.TemplateResponse("dashboard.html", {"request": request})
