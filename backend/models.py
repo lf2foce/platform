@@ -1,26 +1,25 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from datetime import datetime
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, event, ForeignKey
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 
-from database.core import Base
 
 
-class User(Base):
-    __tablename__ = "users"
+#bổ sung 
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+class TimeStampMixin(object):
+    """Timestamping mixin"""
 
-    items = relationship("Item", back_populates="owner")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at._creation_order = 9998
+    updated_at = Column(DateTime, default=datetime.utcnow)
+    updated_at._creation_order = 9998
 
+    @staticmethod
+    def _updated_at(mapper, connection, target):
+        target.updated_at = datetime.utcnow()
 
-class Item(Base):
-    __tablename__ = "items"
+    @classmethod
+    def __declare_last__(cls):
+        event.listen(cls, "before_update", cls._updated_at)
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
-
-    owner = relationship("User", back_populates="items")

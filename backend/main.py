@@ -6,12 +6,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from auth.views import user_router
 
-from sqlalchemy.orm import Session
+from database.core import SessionLocal, engine, Base
 
-import crud, models, schemas
-from database.core import SessionLocal, engine
-
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -21,7 +18,6 @@ templates = Jinja2Templates(directory="templates")
 
 
 app.include_router(user_router)
-
 
 
 

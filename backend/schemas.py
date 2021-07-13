@@ -1,6 +1,18 @@
+
 from typing import List, Optional
 
 from pydantic import BaseModel
+
+
+
+# Pydantic models...
+class LokiBase(BaseModel):
+    class Config:
+        orm_mode = True
+        # bên dưới từ dispatch
+        # validate_assignment = True
+        # arbitrary_types_allowed = True
+        # anystr_strip_whitespace = True
 
 
 class ItemBase(BaseModel):
