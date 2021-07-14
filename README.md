@@ -8,12 +8,13 @@
 
 ## Intall API server
 
-1. Install python3.7+, redis
+1. Install redis
 
 (windows) https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
 (macos) 
 
         brew install redis 
+
 #### run redis
 
         redis-server
@@ -32,12 +33,13 @@
 3. Install package
 
         pip install -r requirements.txt
-### run development server
+
+### Run development server
 
 1. Tạo file <.env> cho config.py  (optional)
 
-DATABASE_HOSTNAME = localhost  
-DATABASE_CREDENTIALS = 'admin:12345678'  
+        DATABASE_HOSTNAME = localhost  
+        DATABASE_CREDENTIALS = 'admin:12345678'  
 
 2. Run webserver
 
@@ -47,8 +49,8 @@ DATABASE_CREDENTIALS = 'admin:12345678'
 
         celery -A proj worker  -l info  
 
-        - `proj` - folder chứa file celery config  
-        - `-l info` - option hiển thị log ở command line    
+    - `proj` - folder chứa file celery config  
+    - `-l info` - option hiển thị log ở command line    
 
 4. Run flower, đổi port --port=5555
 
