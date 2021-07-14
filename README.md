@@ -1,10 +1,9 @@
 <p align="center">
-  <a href="https://rubyonrails.org/" target="_blank" rel="noopener noreferrer">
+  <a href="#" target="_blank" rel="noopener noreferrer">
     <img src="/backend/storage/assets/image/task.jpg" width="300">
   </a>
 </p>
-
-![image info](./backend/storage/assets/image/task.jpg)
+<!-- ![image info](./backend/storage/assets/image/task.jpg) -->
 
 # Welcome to OA Platform
 
@@ -38,7 +37,7 @@
 
 ## Run development server
 
-1. Tạo file <.env> cho config.py  (optional)
+1. Tạo file `.env` cho config.py  (optional)
 
         DATABASE_HOSTNAME = localhost  
         DATABASE_CREDENTIALS = 'admin:12345678'  
@@ -59,16 +58,18 @@
         celery -A proj flower --address=127.0.0.1  
 
 ## Open web page
-### Home page
+Home page
 http://localhost:8000
 
-### realtime monitor worker
+Realtime monitor worker
 http://127.0.0.1:5555
 
 ## Usage
+
 ### Notes
 - Pydantic model khác với sqlAlchemy model  
 - Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py   
+
 ### Config DB 
 /database/core.py
 
@@ -77,6 +78,7 @@ http://127.0.0.1:5555
 
 ### Add new features
 /backend
+
 #### App structure
 - views.py - Routes  
 - service - API Function  
