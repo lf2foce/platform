@@ -71,25 +71,25 @@ http://127.0.0.1:5555
 - Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py   
 
 **Config DB**
-- /database/core.py
+- `/database/core.py`
 
 **Add new project at**
-- /team_projects/
+- `/team_projects/`
 
 **Add new features**
 - /backend
 
 **App structure**
-- views.py - Routes  
-- service - API Function  
-- models -  Model / sql Object of Feature (notification, auth, report)  
+- `views.py` - Routes  
+- `service` - API Function  
+- `models` -  Model / sql Object of Feature (notification, auth, report)  
 
 **Monolithic views**
 - /static - for Style, javascript  
 - /templates/ - html views  
 - /main.py - routes  
 
-**Package**
+**Package**  
 fastapi - web framework  
 https://fastapi.tiangolo.com/tutorial/first-steps/  
 
