@@ -3,14 +3,17 @@
 ### install python3.7+, redis
 (windows) https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
 (macos) 
+
 > brew install redis 
 #### run redis
+
 > redis-server
 #### test redis
 open command line:   
+
 > redis-cli  
 > 127.0.0.1:6379> ping  
->> PONG (it worked)  
+> \> PONG (it worked)  
 
 ### Clone package 
 > git clone <source>   
@@ -31,8 +34,8 @@ DATABASE_CREDENTIALS = 'admin:12345678'
 > celery -A proj worker  -l info
 
 Note:   
-"proj" - folder chứa file celery config  
-"-l info" - option hiển thị log ở command line  
+**proj** - folder chứa file celery config  
+**-l info** - option hiển thị log ở command line  
 
 #### run flower, đổi port --port=5555
 > celery -A proj flower --address=127.0.0.1  
@@ -46,8 +49,8 @@ http://127.0.0.1:5555
 
 ## Usage
 ### Notes
-Chú ý Pydantic model khác với sqlAlchemy model  
-Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py   
+- Pydantic model khác với sqlAlchemy model  
+- Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py   
 ### Config DB 
 /database/core.py
 
@@ -57,14 +60,14 @@ Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py
 ### Add new features
 /backend
 #### App structure
-views.py - Routes  
-service - API Function  
-models -  Model / sql Object of Feature (notification, auth, report)  
+- views.py - Routes  
+- service - API Function  
+- models -  Model / sql Object of Feature (notification, auth, report)  
 
 ### Monolithic views
-/static - for Style, javascript  
-/templates/ - html views  
-/main.py - routes  
+- /static - for Style, javascript  
+- /templates/ - html views  
+- /main.py - routes  
 
 ### Package
 fastapi - web framework  
