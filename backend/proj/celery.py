@@ -15,6 +15,7 @@ app = Celery('proj',
 app.conf.update(
     result_expires=3600,
 )
+app.conf.timezone = 'Asia/Ho_Chi_Minh'
 
 if __name__ == '__main__':
     app.start()

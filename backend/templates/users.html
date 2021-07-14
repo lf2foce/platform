@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+<script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous">
+</script>
+
+{%endblock%}
+
+{%block content%}
+<h1 class="display-6 m-3">Users</h1>
+
+
+<script>
+    (function() {
+        console.log('Sanity Check!');
+    })();
+  
+    (function () {
+        fetch('/api/users/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            // const html = `
+            // <tr>
+            //     <td>${taskID}</td>
+            //     <td>${res.task_status}</td>
+            //     <td>${res.task_result}</td>
+            // </tr>`;
+            // const newRow = document.getElementById('tasks').insertRow(0);
+            // newRow.innerHTML = html;
+        })
+    })();
+  
+//   function getStatus(taskID) {
+//     fetch(`/tasks/${taskID}`, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       },
+//     })
+//     .then(response => response.json())
+//     .then(res => {
+//       console.log(res)
+//       const html = `
+//         <tr>
+//           <td>${taskID}</td>
+//           <td>${res.task_status}</td>
+//           <td>${res.task_result}</td>
+//         </tr>`;
+//       const newRow = document.getElementById('tasks').insertRow(0);
+//       newRow.innerHTML = html;
+  
+//       const taskStatus = res.task_status;
+//       if (taskStatus === 'SUCCESS' || taskStatus === 'FAILURE') return false;
+//       setTimeout(function() {
+//         getStatus(res.task_id);
+//       }, 1000);
+//     })
+//     .catch(err => console.log(err));
+//   }
+  </script>
+
+
+
+{%endblock%}

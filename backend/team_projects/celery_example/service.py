@@ -1,11 +1,9 @@
 import logging
 import time
 from celery import Task
-from worker import celery
+from proj.celery import app as celery_app
 
-from proj.celery import app
-
-@app.task()
+@celery_app.task()
 def create_task2():
     time.sleep(2)
     return True

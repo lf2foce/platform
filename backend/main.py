@@ -11,11 +11,9 @@ from team_projects.bigquery_example.views import router as bq_router
 from team_projects.celery_example.views import router as celery_router
 
 from database.core import SessionLocal, engine, Base
-# import worker
-# from worker import create_task
+
 from proj.celery import app as worker
 from proj.tasks import create_task
-
 from celery.result import AsyncResult
 
 
@@ -25,7 +23,7 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-app.include_router(user_router, prefix="/users", tags=["users"])
+app.include_router(user_router, prefix="/api/users", tags=["users"])
 app.include_router(bq_router, tags=["bigquery"])
 app.include_router(report_router, tags=["chart"])
 app.include_router(celery_router)
@@ -34,6 +32,10 @@ app.include_router(celery_router)
 @app.get("/", response_class=HTMLResponse)
 def dashboard(request: Request):
     return templates.TemplateResponse("dashboard.html", {"request": request})
+
+@app.get("/users", response_class=HTMLResponse)
+def users(request: Request):
+    return templates.TemplateResponse("users.html", {"request": request})
 
 
 @app.post("/tasks", status_code=201)

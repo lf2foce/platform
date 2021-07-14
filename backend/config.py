@@ -18,6 +18,9 @@ DEFAULT_STATIC_DIR = os.path.join(
 )
 STATIC_DIR = config("STATIC_DIR", default=DEFAULT_STATIC_DIR)
 
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=CommaSeparatedStrings)
+SECRET_KEY = config('SECRET_KEY', cast=Secret)
+
 
 # database
 DATABASE_HOSTNAME = config("DATABASE_HOSTNAME")
@@ -29,8 +32,6 @@ _QUOTED_DATABASE_PASSWORD = parse.quote(str(_DATABASE_CREDENTIAL_PASSWORD))
 DATABASE_NAME = config("DATABASE_NAME", default="loki")
 DATABASE_PORT = config("DATABASE_PORT", default="3306")
 SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{_DATABASE_CREDENTIAL_USER}:{_QUOTED_DATABASE_PASSWORD}@{DATABASE_HOSTNAME}:{DATABASE_PORT}/{DATABASE_NAME}"
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=CommaSeparatedStrings)
-SECRET_KEY = config('SECRET_KEY', cast=Secret)
 
 #đang test
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", default='redis://127.0.0.1:6379')
