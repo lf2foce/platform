@@ -1,8 +1,10 @@
 <p align="center">
   <a href="https://rubyonrails.org/" target="_blank" rel="noopener noreferrer">
-    <img src="https://rubyonrails.org/images/rails-logo.svg" width="300">
+    <img src="/backend/storage/assets/image/task.jpg" width="300">
   </a>
 </p>
+
+![image info](./backend/storage/assets/image/task.jpg)
 
 # Welcome to OA Platform
 
@@ -27,14 +29,14 @@
 
 2. Clone package 
 
-        git clone \<source>   
+        git clone <source>   
         cd backend
 
 3. Install package
 
         pip install -r requirements.txt
 
-### Run development server
+## Run development server
 
 1. Tạo file <.env> cho config.py  (optional)
 
