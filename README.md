@@ -1,21 +1,23 @@
 ## Intall API server
+
 ### install python3.7+, redis
 (windows) https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
-(macos) brew install redis 
+(macos) 
+> brew install redis 
 #### run redis
-redis-server
+> redis-server
 #### test redis
 open command line:   
-redis-cli  
-127.0.0.1:6379> ping  
-> PONG (it worked)  
+> redis-cli  
+> 127.0.0.1:6379> ping  
+>> PONG (it worked)  
 
 ### Clone package 
-git clone <source>   
-cd backend  
+> git clone <source>   
+> cd backend  
 
 ### install package
-pip install -r requirements.txt
+> pip install -r requirements.txt
 
 ### run development server
 #### tạo file <.env> cho config.py  (optional)
@@ -23,17 +25,17 @@ DATABASE_HOSTNAME = localhost
 DATABASE_CREDENTIALS = 'admin:12345678'  
 
 #### run webserver
-uvicorn main:app --reload
+> uvicorn main:app --reload
 
 #### run celery worker 
-celery -A proj worker  -l info
+> celery -A proj worker  -l info
 
 Note:   
-<proj> - folder chứa file celery config  
-<-l info> - option hiển thị log ở command line  
+"proj" - folder chứa file celery config  
+"-l info" - option hiển thị log ở command line  
 
 #### run flower, đổi port --port=5555
-celery -A proj flower --address=127.0.0.1  
+> celery -A proj flower --address=127.0.0.1  
 
 ## Open web page
 ### Home page
