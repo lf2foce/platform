@@ -9,19 +9,20 @@
 ## Intall API server
 
 1. Install python3.7+, redis
+
 (windows) https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
 (macos) 
+
         brew install redis 
 #### run redis
 
         redis-server
-#### test redis
 
-open command line:  
+#### open command line to test redis 
 
         redis-cli  
-        7.0.0.1:6379> ping  
-        \> PONG (it worked)  
+        127.0.0.1:6379> ping  
+        > PONG (it worked)  
 
 2. Clone package 
 
@@ -34,6 +35,7 @@ open command line:
 ### run development server
 
 1. Tạo file <.env> cho config.py  (optional)
+
 DATABASE_HOSTNAME = localhost  
 DATABASE_CREDENTIALS = 'admin:12345678'  
 
