@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://rubyonrails.org/" target="_blank" rel="noopener noreferrer">
-    <img src="https://rubyonrails.org/images/rails-logo.svg" width="400">
+    <img src="https://rubyonrails.org/images/rails-logo.svg" width="300">
   </a>
 </p>
 
@@ -10,8 +10,8 @@
 
 1. Install redis
 
-    - (windows) https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
-    - (macos) 
+    `windows` https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
+    `macos`
 
         brew install redis 
     
