@@ -1,42 +1,49 @@
+<p align="center">
+  <a href="https://rubyonrails.org/" target="_blank" rel="noopener noreferrer">
+    <img src="https://rubyonrails.org/images/rails-logo.svg" width="400">
+  </a>
+</p>
+
+# Welcome to OA Platform
+
 ## Intall API server
 
 1. Install python3.7+, redis
 (windows) https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
 (macos) 
-
-> brew install redis 
+        brew install redis 
 #### run redis
 
-> redis-server
+        redis-server
 #### test redis
-open command line:   
 
-> redis-cli  
-> 127.0.0.1:6379> ping  
-> \> PONG (it worked)  
+open command line:  
+        redis-cli  
+        7.0.0.1:6379> ping  
+        \> PONG (it worked)  
 
 2. Clone package 
-> git clone \<source>   
-> cd backend  .
+        git clone \<source>   
+        cd backend
 
 3. Install package
-> pip install -r requirements.txt
-
+        pip install -r requirements.txt
 ### run development server
+
 1. Tạo file <.env> cho config.py  (optional)
 DATABASE_HOSTNAME = localhost  
 DATABASE_CREDENTIALS = 'admin:12345678'  
 
 2. Run webserver
-> uvicorn main:app --reload
+        uvicorn main:app --reload
 
 3. Run celery worker 
-> celery -A proj worker  -l info
-> - **proj** - folder chứa file celery config  
-> - **-l info** - option hiển thị log ở command line    
+        celery -A proj worker  -l info
+        -  `proj` - folder chứa file celery config  
+        - `-l info` - option hiển thị log ở command line    
 
 4. Run flower, đổi port --port=5555
-> celery -A proj flower --address=127.0.0.1  
+        celery -A proj flower --address=127.0.0.1  
 
 ## Open web page
 ### Home page
