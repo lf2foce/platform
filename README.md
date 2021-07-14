@@ -66,30 +66,30 @@ http://127.0.0.1:5555
 
 ## Usage
 
-### Notes
+**Notes**:
 - Pydantic model khác với sqlAlchemy model  
 - Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py   
 
-### Config DB 
-/database/core.py
+**Config DB**
+- /database/core.py
 
-### Add new project at
-/team_projects/
+**Add new project at**
+- /team_projects/
 
-### Add new features
-/backend
+**Add new features**
+- /backend
 
-#### App structure
+**App structure**
 - views.py - Routes  
 - service - API Function  
 - models -  Model / sql Object of Feature (notification, auth, report)  
 
-### Monolithic views
+**Monolithic views**
 - /static - for Style, javascript  
 - /templates/ - html views  
 - /main.py - routes  
 
-### Package
+**Package**
 fastapi - web framework  
 https://fastapi.tiangolo.com/tutorial/first-steps/  
 
