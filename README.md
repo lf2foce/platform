@@ -18,15 +18,18 @@
 #### test redis
 
 open command line:  
+
         redis-cli  
         7.0.0.1:6379> ping  
         \> PONG (it worked)  
 
 2. Clone package 
+
         git clone \<source>   
         cd backend
 
 3. Install package
+
         pip install -r requirements.txt
 ### run development server
 
@@ -35,14 +38,18 @@ DATABASE_HOSTNAME = localhost
 DATABASE_CREDENTIALS = 'admin:12345678'  
 
 2. Run webserver
+
         uvicorn main:app --reload
 
 3. Run celery worker 
-        celery -A proj worker  -l info
-        -  `proj` - folder chứa file celery config  
+
+        celery -A proj worker  -l info  
+
+        - `proj` - folder chứa file celery config  
         - `-l info` - option hiển thị log ở command line    
 
 4. Run flower, đổi port --port=5555
+
         celery -A proj flower --address=127.0.0.1  
 
 ## Open web page
