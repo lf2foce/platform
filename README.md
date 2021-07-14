@@ -89,18 +89,19 @@ http://127.0.0.1:5555
 - `/templates/` - html views  
 - `/main.py` - routes  
 
-**Package**  
-    fastapi - web framework  
-    https://fastapi.tiangolo.com/tutorial/first-steps/  
+**Package** 
 
-    sqlAchemy  
-    https://fastapi.tiangolo.com/tutorial/sql-databases/  
+fastapi - web framework  
+https://fastapi.tiangolo.com/tutorial/first-steps/  
 
-    celery redis flower - task queue  
-    https://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#first-steps  
+sqlAchemy  
+https://fastapi.tiangolo.com/tutorial/sql-databases/  
 
-    plotly - chart  
-    https://plotly.com/javascript/  
+celery redis flower - task queue  
+https://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#first-steps  
 
-    websocket/server sent event   
-    (plan to send log messages to client)  
+plotly - chart  
+https://plotly.com/javascript/  
+
+websocket/server sent event   
+(plan to send log messages to client)  
