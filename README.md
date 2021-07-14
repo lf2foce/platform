@@ -77,7 +77,7 @@ http://127.0.0.1:5555
 - `/team_projects/`
 
 **Add new features**
-- /backend
+- `/backend`
 
 **App structure**
 - `views.py` - Routes  
@@ -85,22 +85,22 @@ http://127.0.0.1:5555
 - `models` -  Model / sql Object of Feature (notification, auth, report)  
 
 **Monolithic views**
-- /static - for Style, javascript  
-- /templates/ - html views  
-- /main.py - routes  
+- `/static` - for Style, javascript  
+- `/templates/` - html views  
+- `/main.py` - routes  
 
 **Package**  
-fastapi - web framework  
-https://fastapi.tiangolo.com/tutorial/first-steps/  
+    fastapi - web framework  
+    https://fastapi.tiangolo.com/tutorial/first-steps/  
 
-sqlAchemy  
-https://fastapi.tiangolo.com/tutorial/sql-databases/  
+    sqlAchemy  
+    https://fastapi.tiangolo.com/tutorial/sql-databases/  
 
-celery redis flower - task queue  
-https://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#first-steps  
+    celery redis flower - task queue  
+    https://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#first-steps  
 
-plotly - chart  
-https://plotly.com/javascript/  
+    plotly - chart  
+    https://plotly.com/javascript/  
 
-websocket/server sent event   
-(plan to send log messages to client)  
+    websocket/server sent event   
+    (plan to send log messages to client)  
