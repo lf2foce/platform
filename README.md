@@ -5,22 +5,22 @@
 ### run redis
 redis-server
 ### test redis
-open command line: 
-redis-cli
-127.0.0.1:6379> ping
->>> PONG (it worked)
+open command line:   
+redis-cli  
+127.0.0.1:6379> ping  
+> PONG (it worked)  
 
 ## Clone package 
-git clone <source> 
-cd backend
+git clone <source>   
+cd backend  
 
 ## install package
 pip install -r requirements.txt
 
 ## run development server
 ### tạo file <.env> cho config.py  (optional)
-DATABASE_HOSTNAME = localhost
-DATABASE_CREDENTIALS = 'admin:12345678'
+DATABASE_HOSTNAME = localhost  
+DATABASE_CREDENTIALS = 'admin:12345678'  
 
 ### run webserver
 uvicorn main:app --reload
@@ -29,11 +29,11 @@ uvicorn main:app --reload
 celery -A proj worker  -l info
 
 Giải thích: 
-<proj> - folder chứa file celery config
-<-l info> - option hiển thị log ở command line
+<proj> - folder chứa file celery config  
+<-l info> - option hiển thị log ở command line  
 
 ### run flower, đổi port --port=5555
-celery -A proj flower --address=127.0.0.1
+celery -A proj flower --address=127.0.0.1  
 
 # Open web page
 ## Home page
@@ -44,8 +44,8 @@ http://127.0.0.1:5555
 
 # Usage
 ## Notes
-Chú ý Pydantic model khác với sqlAlchemy model
-Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py
+Chú ý Pydantic model khác với sqlAlchemy model  
+Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py   
 ## Config DB 
 /database/core.py
 
@@ -55,27 +55,27 @@ Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py
 ## Add new features
 /backend
 ### App structure
-views.py - Routes
-service - API Function
-models -  Model / sql Object of Feature (notification, auth, report)
+views.py - Routes  
+service - API Function  
+models -  Model / sql Object of Feature (notification, auth, report)  
 
 ## Monolithic views
-/static - for Style, javascript
-/templates/ - html views
-/main.py - routes
+/static - for Style, javascript  
+/templates/ - html views  
+/main.py - routes  
 
 ## Package
-fastapi - web framework
-https://fastapi.tiangolo.com/tutorial/first-steps/
+fastapi - web framework  
+https://fastapi.tiangolo.com/tutorial/first-steps/  
 
 sqlAchemy
-https://fastapi.tiangolo.com/tutorial/sql-databases/
+https://fastapi.tiangolo.com/tutorial/sql-databases/  
 
-celery redis flower - task queue
-https://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#first-steps
+celery redis flower - task queue  
+https://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#first-steps  
 
-plotly - chart
-https://plotly.com/javascript/
+plotly - chart  
+https://plotly.com/javascript/  
 
-websocket/server sent event 
-(plan to send log messages to client)
+websocket/server sent event   
+(plan to send log messages to client)  
