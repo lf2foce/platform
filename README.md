@@ -10,16 +10,16 @@
 
 1. Install redis
 
-(windows) https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
-(macos) 
+    - (windows) https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99  
+    - (macos) 
 
         brew install redis 
-
-#### run redis
-
+    
+    to run redis server
+        
         redis-server
 
-#### open command line to test redis 
+    open command line to test redis 
 
         redis-cli  
         127.0.0.1:6379> ping  
@@ -49,8 +49,8 @@
 
         celery -A proj worker  -l info  
 
-    - `proj` - folder chứa file celery config  
-    - `-l info` - option hiển thị log ở command line    
+    where `proj` - folder chứa file celery config  
+    and `-l info` - option hiển thị log ở command line    
 
 4. Run flower, đổi port --port=5555
 
