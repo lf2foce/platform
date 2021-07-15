@@ -12,7 +12,7 @@ from team_projects.celery_example.views import router as celery_router
 
 from database.core import SessionLocal, engine, Base
 
-from proj.celery import app as worker
+from proj.celery import app as celery_app
 from proj.tasks import create_task
 from celery.result import AsyncResult
 
@@ -41,13 +41,13 @@ def users(request: Request):
 @app.post("/tasks", status_code=201)
 def run_task(payload = Body(...)):
     task_type = payload["type"]
-    task = create_task.delay(int(task_type))
+    task = create_task.delay(task_type)
     return {"task_id": task.id}
 
 
 @app.get("/tasks/{task_id}")
 def get_status(task_id):
-    task_result = AsyncResult(task_id, app=worker)
+    task_result = AsyncResult(task_id, app=celery_app)
     result = {
         "task_id": task_id,
         "task_status": task_result.status,

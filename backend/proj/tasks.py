@@ -1,5 +1,9 @@
-from .celery import app
+
 import time
+
+from .celery import app
+
+
 
 @app.task
 def add(x, y):
@@ -17,5 +21,6 @@ def xsum(numbers):
 
 @app.task(name="create_task")
 def create_task(task_type):
-    time.sleep(int(task_type) * 10)
+    time.sleep(int(task_type) * 3)
+    # print(task_type)
     return True    

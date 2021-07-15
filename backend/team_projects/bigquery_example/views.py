@@ -9,7 +9,7 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory="templates")
 
-
+# connect with external service
 @router.get("/bq", response_class=HTMLResponse)
 def bq(request: Request):
     client = bigquery.Client()

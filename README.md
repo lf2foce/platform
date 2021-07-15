@@ -51,11 +51,18 @@
         celery -A proj worker  -l info  
 
     where `proj` - folder chứa file celery config  
-    and `-l info` - option hiển thị log ở command line    
+    and `-l info` - option hiển thị log ở command line
+
 
 4. Run flower, đổi port --port=5555
 
         celery -A proj flower --address=127.0.0.1  
+
+5. To start the celery beat service (optional):
+
+        celery -A proj beat
+
+    `-s /path/to/celerybeat-schedule` - option đổi tên db schedule    
 
 ## Open web page
 Home page

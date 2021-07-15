@@ -30,6 +30,7 @@ PyYAML==5.4.1
 requests==2.25.1
 six==1.16.0
 SQLAlchemy==1.4.20
+sqlalchemy-utils
 starlette==0.14.2
 urllib3==1.26.6
 uvicorn==0.14.0
