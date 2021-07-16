@@ -29,13 +29,15 @@
 2. Clone package 
 
         git clone <source>   
-        cd backend
+        cd platform
 
 3. Install package
 
         pip install -r requirements.txt
+        
+## Run development server 
 
-## Run development server
+**cd backend**
 
 1. Tạo file `.env` cho config.py  (optional)
 
@@ -50,8 +52,9 @@
 
         celery -A proj worker  -l info  
 
-    where `proj` - folder chứa file celery config  
-    and `-l info` - option hiển thị log ở command line
+     `proj` - folder chứa file celery config  
+     `-l info` - option hiển thị log ở command line  
+     `-A proj` - submodule named proj.celery (if not attribute named proj.celery or proj.app)
 
 
 4. Run flower, đổi port --port=5555
@@ -68,19 +71,18 @@
 Home page
 http://localhost:8000
 
+OpenAPI 
+http://localhost:8000/docs
+
 Realtime monitor worker
 http://127.0.0.1:5555
 
 ## Usage
 
-**Notes**:
-- Pydantic model khác với sqlAlchemy model  
-- Mỗi tính năng sẽ có model/database riêng, DB chung ở database/core.py   
-
 **Config DB**
 - `/database/core.py`
 
-**Add new project at**
+**Add new projects at**
 - `/team_projects/`
 
 **Add new features**
@@ -90,16 +92,33 @@ http://127.0.0.1:5555
 - `views.py` - Routes  
 - `service` - API Function  
 - `models` -  Model / sql Object of Feature (notification, auth, report)  
+- `backend/schemas.py` & `backend/models.py` - shared model of whole platform  
+- `backend/proj` - Default folder for Celery  
 
 **Monolithic views**
 - `/static` - for Style, javascript  
 - `/templates/` - html views  
 - `/main.py` - routes  
 
+## Explaination 
+
+**Notes**:
+- Pydantic model (data validation) khác với sqlAlchemy model (class & intanstant interact with database)
+- Pydantic model trong schemas.py, SQLAlchemy model trong models.py của từng Feature/Project
+- Mỗi tính năng sẽ có model/database.py riêng, DB chung ở database/core.py    
+
+`#database/core.py`  
+Create SQLAlchemy models from the `Base` class and import to  models.py of each Project  
+`orm_mode = True` - Pydantic's orm_mode will tell the Pydantic model to read the data even if it is not a dict
+`SessionLocal` - instant class of database session  
+`Session` from  `sqlalchemy.orm` - declare the type of the db parameters
+
+## References
 **Package** 
 
 fastapi - web framework  
 https://fastapi.tiangolo.com/tutorial/first-steps/  
+https://fastapi.tiangolo.com/tutorial/sql-databases/
 
 sqlAchemy  
 https://fastapi.tiangolo.com/tutorial/sql-databases/  

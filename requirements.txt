@@ -38,3 +38,4 @@ websockets==9.1
 celery==5.1.2
 redis
 flower
+alembic
