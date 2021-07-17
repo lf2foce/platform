@@ -17,7 +17,13 @@ from proj.tasks import create_task
 from celery.result import AsyncResult
 
 
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine) #fastapi docs, init create DB
+##
+from alembic.config import Config
+from alembic import command
+alembic_cfg = Config("alembic.ini")
+command.stamp(alembic_cfg, "head")
+##
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")

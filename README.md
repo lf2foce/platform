@@ -37,7 +37,7 @@
         
 ## Run development server 
 
-**cd backend**
+        cd backend
 
 1. Tạo file `.env` cho config.py  (optional)
 
@@ -81,6 +81,7 @@ http://127.0.0.1:5555
 
 **Config DB**
 - `/database/core.py`
+- `/database/revisions/` alembic folder about migration
 
 **Add new projects at**
 - `/team_projects/`
@@ -103,16 +104,15 @@ http://127.0.0.1:5555
 ## Explaination 
 
 **Notes**:
+
 - Pydantic model (data validation) khác với sqlAlchemy model (class & intanstant interact with database)
 - Pydantic model trong schemas.py, SQLAlchemy model trong models.py của từng Feature/Project
 - Mỗi tính năng sẽ có model/database.py riêng, DB chung ở database/core.py    
-
-`#database/core.py`  
-Create SQLAlchemy models from the `Base` class and import to  models.py of each Project  
-`orm_mode = True` - Pydantic's orm_mode will tell the Pydantic model to read the data even if it is not a dict
-`SessionLocal` - instant class of database session  
-`Session` from  `sqlalchemy.orm` - declare the type of the db parameters
-
+- `#database/core.py`  Create SQLAlchemy models from the `Base` class and import to  models.py of each Project  
+- `orm_mode = True` - Pydantic's orm_mode will tell the Pydantic model to read the data even if it is not a dict  
+- `SessionLocal` - instant class of database session  
+- `Session` from  `sqlalchemy.orm` - declare the type of the db parameters  
+- `Alembic` module - initialize your database (create tables, etc) & migrations
 ## References
 **Package** 
 
@@ -122,6 +122,9 @@ https://fastapi.tiangolo.com/tutorial/sql-databases/
 
 sqlAchemy  
 https://fastapi.tiangolo.com/tutorial/sql-databases/  
+
+alembic - Module migration
+https://alembic.sqlalchemy.org/en/latest/
 
 celery redis flower - task queue  
 https://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#first-steps  
