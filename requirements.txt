@@ -31,11 +31,11 @@ requests==2.25.1
 six==1.16.0
 SQLAlchemy==1.4.20
 sqlalchemy-utils
-starlette==0.14.2
+starlette==0.16.0
 urllib3==1.26.6
 uvicorn==0.14.0
 websockets==9.1
 celery==5.1.2
 redis
 flower
-alembic==1.6.5
+slack_sdk==3.8.0
