@@ -39,3 +39,4 @@ celery==5.1.2
 redis
 flower
 slack_sdk==3.8.0
+slugify

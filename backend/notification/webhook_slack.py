@@ -3,8 +3,9 @@ from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlalchemy.orm import Session
 from database.core import get_db
 import requests
+import functools
 import json
-import schemas
+
 
 router = APIRouter()
 
@@ -19,7 +20,5 @@ def slack_bot(log: str):
     data = json.dumps(data)
     response = requests.post(url, headers=headers, data=data)
     return 'success'
-
-
 
 

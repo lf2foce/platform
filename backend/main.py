@@ -7,9 +7,9 @@ from fastapi.templating import Jinja2Templates
 
 from auth.views import user_router
 from report.views import router as report_router
-from team_projects.bigquery_example.views import router as bq_router
-from team_projects.celery_example.views import router as celery_router
-from  notification.webhook_slack import router as slack_router
+from team_projects.example.bigquery_example.views import router as bq_router
+from team_projects.example.celery_example.views import router as celery_router
+from notification.views import router as slack_router
 
 from database.core import SessionLocal, engine, Base
 
@@ -28,7 +28,7 @@ app.include_router(user_router, prefix="/api/users", tags=["users"])
 app.include_router(bq_router, tags=["bigquery"])
 app.include_router(report_router, tags=["chart"])
 app.include_router(celery_router)
-app.include_router(slack_router)
+app.include_router(slack_router, tags=["notification"])
 
 
 

@@ -1,8 +1,6 @@
-
 from typing import List, Optional
-
 from pydantic import BaseModel
-
+from .item import Item
 
 
 # Pydantic models...
@@ -18,23 +16,6 @@ class LokiBase(BaseModel):
         # validate_assignment = True
         # arbitrary_types_allowed = True
         # anystr_strip_whitespace = True
-
-
-class ItemBase(BaseModel):
-    title: str
-    description: Optional[str] = None
-
-
-class ItemCreate(ItemBase):
-    pass
-
-
-class Item(ItemBase):
-    id: int
-    owner_id: int
-
-    class Config:
-        orm_mode = True
 
 
 class UserBase(BaseModel):
