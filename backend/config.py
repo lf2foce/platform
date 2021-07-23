@@ -36,7 +36,7 @@ DATABASE_CREDENTIALS = config("DATABASE_CREDENTIALS", cast=Secret)
 
 # development server SQLite3
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sqlite_dev.db"
-CELERY_BROKER_URL = config("CELERY_BROKER_URL", default='redis://127.0.0.1:6379')
+CELERY_BROKER_URL = config("CELERY_BROKER_URL", default='redis://127.0.0.1:6379/0')
 # CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default='redis://127.0.0.1:6379')
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default='db+sqlite:///sqlite_dev.db')
 CELERY_ACCEPT_CONTENT = config("CELERY_ACCEPT_CONTENT", default=['application/json'])

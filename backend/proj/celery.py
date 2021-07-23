@@ -1,6 +1,7 @@
 
 from celery import Celery
 from celery.schedules import crontab
+from database.core import Base
 
 from config import (
     CELERY_BROKER_URL,
@@ -12,12 +13,15 @@ from config import (
 app = Celery('proj',
              broker=CELERY_BROKER_URL,
              backend=CELERY_RESULT_BACKEND,
-             include=['proj.tasks', 'team_projects.example.celery_example.service'])
-
+             include=['proj.tasks', 
+                      'team_projects.example.celery_example.service',
+                      'notification.service'])
 # Optional configuration, see the application user guide.
 app.conf.update(
     result_expires=3600,
+    
 )
+app.conf.CELERY_WORKER_SEND_TASK_EVENTS = True
 app.conf.timezone = CELERY_TIMEZONE
 
 test = 10

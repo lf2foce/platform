@@ -51,18 +51,23 @@ h1 {
   <hr><br>
   <div>
     <h3>Tasks</h3>
-    <p>Pick a task length.</p>
+    <p>Trigger celery tasks</p>
     <div class="btn-group" role="group" aria-label="Basic example">
       <button type="button" class="btn btn-primary" onclick="handleClick(1)">Short</a>
       <button type="button" class="btn btn-primary" onclick="handleClick(2)">Medium</a>
       <button type="button" class="btn btn-primary" onclick="handleClick(3)">Long</a>
+      <button type="button" class="btn btn-primary" onclick="sendSlackMessage()">Slack</a>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          10
+          <span class="visually-hidden">unread messages</span>
+        </span>
     </div>
   </div>
   <br><br>
   <div>
     <h3>Task Status</h3>
     <br>
-    <table class="table">
+    <table class="table table-hover">
       <thead>
         <tr>
           <th>ID</th>
@@ -86,6 +91,21 @@ h1 {
   console.log('Sanity Check!');
 })();
 
+function sendSlackMessage() {
+  fetch('/slackbot', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status: "from dashboard" }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    getStatus(data.task_id, data.task_name)
+    console.log(data)
+  })
+}
+
 function handleClick(type) {
   fetch('/tasks', {
     method: 'POST',
@@ -100,7 +120,7 @@ function handleClick(type) {
   })
 }
 
-function getStatus(taskID) {
+function getStatus(taskID, taskName) {
   fetch(`/tasks/${taskID}`, {
     method: 'GET',
     headers: {
@@ -121,6 +141,7 @@ function getStatus(taskID) {
 
     const taskStatus = res.task_status;
     if (taskStatus === 'SUCCESS' || taskStatus === 'FAILURE') return false;
+    
     setTimeout(function() {
       getStatus(res.task_id);
     }, 1000);

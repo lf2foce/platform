@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+<script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous">
+</script>
+
+{%endblock%}
+
+{%block content%}
+<br>
+<h1 class="display-6 mt-3">Projects</h1>
+<br>
+
+
+
+
+<div class="row">
+  <div class="col-sm-5"><h6 class="text-muted">Project</h6></div>
+  <div class="col-sm-7">
+    <div class="row">
+      <div class="col-sm-4"><h6 class="text-muted">Schedule</h6></div>
+      <div class="col-sm-8"><h6 class="text-muted">Action</h6></div>
+    </div>
+  </div>
+  <hr>
+
+  {% for title in ['first', 'sec', 'third', 'fourth', 'fifth'] %}
+  <div class="col-sm-5 mb-3">
+    <h6>Project 1 </h6>
+    <span class="badge bg-info rounded-pill">mysql</span>
+    <span class="badge bg-success rounded-pill">gsheet</span>
+    <span class="badge bg-secondary rounded-pill">bigQ</span>
+  </div>
+  <div class="col-sm-7">
+    <div class="row">
+      <div class="col-sm-4">
+        Run Every day
+      </div>
+      <div class="col-sm-8">
+        <a class="card-link text-decoration-none" href="/users">
+          <span data-feather="play-circle"></span>
+          Trigger
+        </a>
+        <a class="card-link text-decoration-none" href="/users">
+          <span data-feather="clock"></span>
+          Schedule
+        </a>
+        <a class="card-link text-decoration-none" href="/users">
+          <span data-feather="activity"></span>
+          Monitor
+        </a>
+        <a class="card-link text-decoration-none text-danger" href="/users">
+          <span data-feather="trash-2"></span>
+          Delete
+        </a>
+      </div>
+    </div>
+  </div>
+  <hr>  
+  {% endfor %}
+</div>
+
+{%endblock%}

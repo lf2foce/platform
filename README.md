@@ -81,7 +81,8 @@ http://127.0.0.1:5555
 
 **Config DB**
 - `/database/core.py`
-- `/database/revisions/` alembic folder about migration
+- `/database/models.py` Models quan trọng của platform lưu tập trung
+- `/database/revisions/` alembic folder about migration - <plan>
 
 **Add new projects at**
 - `/team_projects/`
@@ -92,7 +93,7 @@ http://127.0.0.1:5555
 **App structure**
 - `views.py` - Routes  
 - `service` - API Function  
-- `models` -  Model / sql Object of Feature (notification, auth, report)  
+- `models` -  Model / sql Object of Feature (models của riêng app)  
 - `backend/schemas.py` & `backend/models.py` - shared model of whole platform  
 - `backend/proj` - Default folder for Celery  
 

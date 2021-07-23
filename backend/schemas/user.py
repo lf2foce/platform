@@ -1,10 +1,10 @@
 from typing import List, Optional
 from pydantic import BaseModel
 from .item import Item
-
+from .project import Project
 
 # Pydantic models...
-class LokiBase(BaseModel):
+class OABase(BaseModel):
     class Config:
         """
         orm_mode = True allows the app to take ORM objects and translate them into responses automatically. 
@@ -30,6 +30,7 @@ class User(UserBase):
     id: int
     is_active: bool
     items: List[Item] = []
+    projects: List[Project] = []
 
     class Config:
         orm_mode = True
