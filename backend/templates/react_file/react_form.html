@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- We will put our React component inside this div. -->
+    <div id="like_button_container"></div>
+
+
+    <script type="text/babel">
+
+      
+      function Hello(props) {
+        const x = 1;
+        const y = 2;
+        return (
+          <div> hello {props.name} </div>
+        )
+      }
+
+      function App() {
+        const [count, setCount] = React.useState(0)
+        function updateCount(){
+          setCount(count+1)
+        }
+        return (
+          <div>
+            < Hello name="test Name" />
+            <div>{count}</div>
+            <button onClick={updateCount}> edit </button>
+            <input />
+          </div>
+        )
+      }
+      const container = document.getElementById('app');
+
+      ReactDOM.render(
+        < App />, container
+      );
+    </script>
+
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="like_button.js"></script>
+  </body>
+</html>

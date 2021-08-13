@@ -24,26 +24,6 @@ app.conf.update(result_expires=3600, timezone=CELERY_TIMEZONE)
 # app.conf.CELERY_WORKER_SEND_TASK_EVENTS = True
 # app.conf.timezone = CELERY_TIMEZONE
 
-# celery beat
-# test = 10
-# app.conf.beat_schedule = {
-#     # Executes every Monday morning at 7:30 a.m.
-#     'run-every-Monday': {
-#         'task': 'proj.tasks.add',
-#         'schedule': crontab(hour=7, minute=30, day_of_week=1),
-#         'args': (1,2),
-#     },
-#     'run-every-1min': {
-#         'task': 'proj.tasks.xsum',
-#         'schedule': test,
-#         'args': ([3,4,5,6],),
-#     },
-#     'run-every-30s': {
-#         'task': 'proj.tasks.mul',
-#         'schedule': crontab(minute='*/1'),
-#         'args': (3,4),
-#     },
-# }
 
 if __name__ == "__main__":
     app.start()

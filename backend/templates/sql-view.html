@@ -1,0 +1,161 @@
+
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+
+<!-- 
+a11y-dark
+base16/dracula
+-->
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/a11y-light.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+
+<script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous">
+</script>
+
+<style>
+    main {
+        font-size: 14px;
+    }
+    .main {
+        font-size: 16px;
+    }
+    .hljs {
+        background: #f0f0f0;
+        color: #444;
+        /* background: #2b2b2b; */
+        /* color: white; */
+        border-radius: 10px;
+    }
+    pre code.hljs {
+        padding: 10px;
+        /* white-space: pre; */
+    }
+
+    .result {
+        background-color: #eee;
+        padding: 10px;
+        border-radius: 10px;
+        margin: 1.2em 0;
+    }
+    .post-list a {
+        color: #333;
+        transition: color 0.1s ease;
+        text-decoration: none;
+    }
+    .post-list a:hover {
+        color:  #5544FF;;
+    }
+
+</style>
+
+{%endblock%}
+
+
+{%block content%}
+<h1 class="display-6 mt-3"> SQL discovery</h1>
+<div class="main">
+    
+    <div class="result">
+        <p>🍺 🚀 <b>Test SQL query.</b></p>
+        project name:
+        <br>desc:
+        <br>contact:
+
+    </div>
+    <div class='post-list'>
+        <h4><a href="#">Template query  </a></h4>
+    </div>
+    <div class="template-query">
+        <pre><code class="language-sql" id='test'>{{ code }}</code></pre>
+    </div>
+    <!-- SELECT 
+        COUNT(DISTINCT tcb_transaction_id) as total_transaction, 
+        SUM(amount) as total_amount
+    FROM `vinid-data-selfservice-prod.ONELOYALTY_MART.F_TCB_FILE_TRANSACTION`
+    WHERE calendar_dim_id BETWEEN 'start_date' AND 'end_date' -->
+    
+</div>
+<div class='row g-2'>
+    <div class='col-sm-4'>
+        <form class="form-floating mb-3">
+            <input type="date" class="form-control" id="start-date" value="2021-06-01">
+            <label for="start-date">Start date</label>
+        </form>
+    </div>
+    <div class='col-sm-4'>
+        <form class="form-floating mb-3">
+            <input type="date" class="form-control" id="end-date" value="2021-07-25">
+            <label for="end-date">End date</label>
+        </form>
+    </div>
+</div>
+
+
+<!-- 
+<label for="start">Start date:</label>
+
+<input type="date" class="form-control" id="start-date" name="trip-start"
+       value="2021-06-01"
+       min="2021-06-01" max="2021-12-31">
+
+<label for="start">End date:</label>
+
+<input type="date" id="end-date" name="trip-end"
+        value="2021-06-01"
+        min="2021-06-01" max="2021-12-31">        -->
+
+<div class="run">
+    <button type="button" class="btn btn-primary" id='run'>› Run</button>
+</div>
+<div id="sql-result" class="mb-3 bg-light"></div>
+
+<script>hljs.highlightAll();</script>
+<script>
+    // const query = document.getElementById("template-query")
+    const run_query = document.getElementById("run")
+    const sql_result = document.getElementById("sql-result")
+    const startDate = document.getElementById("start-date").value
+    const endDate = document.getElementById("end-date").value
+    
+    console.log(startDate)
+    run_query.addEventListener("click", function(){  
+
+        // snippet mozilla
+        const date_params = { start_date: startDate, end_date: endDate };
+
+        fetch('/reports/sql', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(date_params),
+            })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            const query1 = document.getElementById("test");
+            query1.textContent = data['a']
+            sql_result.innerHTML = `${data['b']}`
+
+            // reload hljs
+            var element = document.querySelector(".template-query");
+            var blocks = element.querySelectorAll('pre code');
+            blocks.forEach(hljs.highlightElement);
+
+            
+        
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
+    });
+
+</script>
+{%endblock%}
