@@ -1,14 +1,15 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
+
 class ProjectBase(BaseModel):
     title: str
     description: Optional[str] = None
-
+    run_path: str
 
 
 class ProjectCreate(ProjectBase):
-    tags: Optional[str] = None
+    tags: Optional[str] = None  # separate by ;
     scheduled_at: str
 
 

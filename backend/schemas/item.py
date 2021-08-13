@@ -1,8 +1,10 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
+
 class ItemBase(BaseModel):
     title: str
+    knowledge: str
     description: Optional[str] = None
 
 

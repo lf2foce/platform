@@ -1,9 +1,12 @@
 from sqlalchemy.orm import Session
 
 # from auth import models
-from database.models import User, Item
-import schemas.user as user_schema
-import schemas.item as item_schema
+from backend.database.models import User, Item
+import backend.schemas.user as user_schema
+import backend.schemas.item as item_schema
+
+import sqlparse
+
 
 def get_user(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
@@ -21,7 +24,7 @@ def create_user(db: Session, user: user_schema.UserCreate):
     fake_hashed_password = user.password + "notreallyhashed"
     db_user = User(email=user.email, hashed_password=fake_hashed_password)
     db.add(db_user)
-    db.commit() 
+    db.commit()
     db.refresh(db_user)
     return db_user
 
@@ -31,7 +34,14 @@ def get_items(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user_item(db: Session, item: item_schema.ItemCreate, user_id: int):
-    db_item = Item(**item.dict(), owner_id=user_id)
+    # db_item = Item(**item.dict(), owner_id=user_id) # ddang ddunsg
+    db_item = Item(
+        title=item.title,
+        description=item.description,
+        owner_id=user_id,
+        knowledge=sqlparse.format(item.knowledge, reindent=True, keyword_case="upper"),
+    )
+
     db.add(db_item)
     db.commit()
     db.refresh(db_item)

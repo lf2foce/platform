@@ -1,16 +1,18 @@
 from typing import List
 from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlalchemy.orm import Session
-from database.core import get_db
-from auth import service
-from schemas import user as user_schema
-from schemas import item as item_schema
+from backend.database.core import get_db
+from backend.auth import service
+from backend.schemas import user as user_schema
+from backend.schemas import item as item_schema
 
 user_router = APIRouter()
 
 
 @user_router.post("/", response_model=user_schema.User)
-def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)): # = Depends(get_db): 
+def create_user(
+    user: user_schema.UserCreate, db: Session = Depends(get_db)
+):  # = Depends(get_db):
     db_user = service.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -42,6 +44,7 @@ def create_item_for_user(
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     items = service.get_items(db, skip=skip, limit=limit)
     return items
+
 
 # @user_router.get("/", tags=["users"])
 # async def read_users():

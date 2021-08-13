@@ -13,7 +13,6 @@ google-cloud-storage==1.40.0
 gunicorn==20.1.0
 Jinja2==3.0.1
 joblib==1.0.1
-matplotlib==3.4.2
 numpy==1.21.0
 openai==0.9.3
 openpyxl==3.0.7
@@ -31,7 +30,6 @@ requests==2.25.1
 six==1.16.0
 SQLAlchemy==1.4.20
 sqlalchemy-utils
-starlette==0.16.0
 urllib3==1.26.6
 uvicorn==0.14.0
 websockets==9.1
@@ -40,3 +38,5 @@ redis
 flower
 slack_sdk==3.8.0
 slugify
+pretty_html_table
+sqlparse

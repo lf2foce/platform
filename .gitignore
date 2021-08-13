@@ -5,3 +5,4 @@ __pycache__
 .env
 Pipfile
 Pipfile.lock
+client_cred.json

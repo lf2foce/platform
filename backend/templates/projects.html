@@ -22,18 +22,21 @@
   <div class="col-sm-5"><h6 class="text-muted">Project</h6></div>
   <div class="col-sm-7">
     <div class="row">
-      <div class="col-sm-4"><h6 class="text-muted">Schedule</h6></div>
+      <div class="col-sm-4"><h6 class="text-muted" >Schedule</h6></div>
+
       <div class="col-sm-8"><h6 class="text-muted">Action</h6></div>
     </div>
   </div>
   <hr>
 
-  {% for title in ['first', 'sec', 'third', 'fourth', 'fifth'] %}
+  {% for project in projects %}
   <div class="col-sm-5 mb-3">
-    <h6>Project 1 </h6>
-    <span class="badge bg-info rounded-pill">mysql</span>
-    <span class="badge bg-success rounded-pill">gsheet</span>
-    <span class="badge bg-secondary rounded-pill">bigQ</span>
+    <h6>{{project.title}} </h6>
+    ~/{{project.run_path}}
+    {% for tag in project.tags.split(';') %}
+      <span class="badge bg-secondary rounded-pill">{{tag}}</span>
+    {% endfor %}
+    
   </div>
   <div class="col-sm-7">
     <div class="row">
@@ -45,7 +48,7 @@
           <span data-feather="play-circle"></span>
           Trigger
         </a>
-        <a class="card-link text-decoration-none" href="/users">
+        <a class="card-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="{{title}}">
           <span data-feather="clock"></span>
           Schedule
         </a>
@@ -64,4 +67,53 @@
   {% endfor %}
 </div>
 
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Cron string</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">description</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var exampleModal = document.getElementById('exampleModal')
+  exampleModal.addEventListener('show.bs.modal', function (event) {
+    // Button that triggered the modal
+    var button = event.relatedTarget
+    // Extract info from data-bs-* attributes
+    var recipient = button.getAttribute('data-bs-whatever')
+    // If necessary, you could initiate an AJAX request here
+    // and then do the updating in a callback.
+    //
+    // Update the modal's content.
+    var modalTitle = exampleModal.querySelector('.modal-title')
+    var modalBodyInput = exampleModal.querySelector('.modal-body input')
+
+    modalTitle.textContent = 'New message to ' + recipient
+    modalBodyInput.value = recipient
+  })
+</script>
 {%endblock%}

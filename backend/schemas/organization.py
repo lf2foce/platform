@@ -1,7 +1,19 @@
 from typing import List, Optional
-from models import LokiBase
+from pydantic import BaseModel
 
-class OrganizationBase(LokiBase):
+
+class OABase(BaseModel):
+    class Config:
+        """
+        orm_mode = True allows the app to take ORM objects and translate them into responses automatically.
+        This automation saves us from manually taking data out of ORM, making it into a dictionary,
+        then loading it in with Pydantic.
+        """
+
+        orm_mode = True
+
+
+class OrganizationBase(OABase):
     id: Optional[int]
     name: str
     description: Optional[str]
@@ -24,6 +36,6 @@ class OrganizationRead(OrganizationBase):
     slug: Optional[str]
 
 
-class OrganizationPagination(LokiBase):
+class OrganizationPagination(OABase):
     total: int
     items: List[OrganizationRead] = []

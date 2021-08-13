@@ -45,6 +45,14 @@ h1 {
 {%endblock%}
 
 {%block content%}
+<!-- <button type="button" class="btn text-primary position-relative mt-3">
+  <span data-feather="bell" style="width: 32px; height: 32px;"></span>
+  <span class="position-absolute top-0 start-80 translate-middle p-2 bg-danger border border-light rounded-circle">
+    <span class="visually-hidden"></span>
+  </span>
+</button> -->
+
+
 
 <div class="starter-template">
   <h1 class="display-6 m-3">FastAPI Celery Redis</h1>
@@ -56,11 +64,13 @@ h1 {
       <button type="button" class="btn btn-primary" onclick="handleClick(1)">Short</a>
       <button type="button" class="btn btn-primary" onclick="handleClick(2)">Medium</a>
       <button type="button" class="btn btn-primary" onclick="handleClick(3)">Long</a>
-      <button type="button" class="btn btn-primary" onclick="sendSlackMessage()">Slack</a>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      <button type="button" class="btn btn-success" onclick="sendSlackMessage()">Slack</a>
+      <button type="button" class="btn btn-warning" onclick="runTest1()">Test1.py</a>
+
+        <!-- <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
           10
           <span class="visually-hidden">unread messages</span>
-        </span>
+        </span> -->
     </div>
   </div>
   <br><br>
@@ -98,6 +108,21 @@ function sendSlackMessage() {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ status: "from dashboard" }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    getStatus(data.task_id, data.task_name)
+    console.log(data)
+  })
+}
+
+function runTest1() {
+  fetch('/api/projects/team-projects', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ project_file_name: "test1.py" }),
   })
   .then(response => response.json())
   .then(data => {
