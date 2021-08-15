@@ -40,3 +40,4 @@ slack_sdk==3.8.0
 slugify
 pretty_html_table
 sqlparse
+pymysql

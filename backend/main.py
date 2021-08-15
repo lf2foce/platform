@@ -2,18 +2,19 @@ import logging
 from typing import List
 from pytz import utc
 from datetime import datetime, timedelta
+from pathlib import Path
 
 # import uvicorn
-
 from fastapi import Depends, FastAPI, HTTPException, Request, Body
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
-
-# from fastapi.logger import logger
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from celery.result import AsyncResult
 
+from .scheduler.views import router as schedule_router
 from .auth.views import user_router
 from .report.views import router as report_router
 from .organization.views import router as org_router
@@ -24,26 +25,16 @@ from .team_projects.example.file_example.views import router as file_router
 from .notification.views import router as slack_router
 
 from .database.core import SessionLocal, engine, Base
+from .database.core import get_db
+from .database.models import Project
 
 from .proj.celery import app as celery_app
 from .proj.tasks import create_task
 from .notification.service import send_slack_message
-from .schemas import schedule as ss
-from .config import SQLALCHEMY_DATABASE_URL
-
-from celery.result import AsyncResult
-
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-
-# from apscheduler.jobstores.redis import RedisJobStore
-from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
-
 
 Base.metadata.create_all(bind=engine)  # fastapi docs, init create DB
 
 app = FastAPI()
-
 
 app.mount("/backend/static", StaticFiles(directory="backend/static"), name="static")
 templates = Jinja2Templates(directory="backend/templates")
@@ -64,59 +55,10 @@ app.add_middleware(
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# config schedule
-
-
-@app.on_event("startup")
-async def load_schedule_or_create_blank():
-    """
-    Instatialise the Schedule Object as a Global Param and also load existing Schedules from SQLite
-    This allows for persistent schedules across server restarts.
-    """
-    global Schedule
-    try:
-        jobstores = {
-            "default": SQLAlchemyJobStore(url=SQLALCHEMY_DATABASE_URL),
-            # "default": RedisJobStore(host="localhost", port=6379)
-        }
-        executors = {
-            "default": ThreadPoolExecutor(20),  # maximum thread count of 20
-            "processpool": ProcessPoolExecutor(5),  # multiple CPU cores
-        }
-        job_defaults = {
-            "coalesce": False,  # default
-            "max_instances": 10,  # Maximum instances of job running
-        }
-        Schedule = AsyncIOScheduler(
-            jobstores=jobstores,
-            executors=executors,
-            job_defaults=job_defaults,
-            timezone=utc,
-        )
-        # Schedule = AsyncIOScheduler(jobstores=jobstores)
-        Schedule.start()
-        logger.info("Created Schedule Object")
-    except:
-        logger.error("Unable to Create Schedule Object")
-
-
-@app.on_event("shutdown")
-async def pickle_schedule():
-    """
-    An Attempt at Shutting down the schedule to avoid orphan jobs
-    """
-    global Schedule
-    Schedule.shutdown()
-    logger.info("Disabled Schedule")
-
-
-########
-
-
-##
-
+app.include_router(schedule_router, prefix="/schedule", tags=["schedule"])
 app.include_router(user_router, prefix="/api/users", tags=["users"])
 app.include_router(project_router, prefix="/api/projects", tags=["projects"])
+
 app.include_router(report_router, prefix="/reports", tags=["reports"])
 app.include_router(slack_router, tags=["notification"])
 app.include_router(org_router, prefix="/api/orgs")
@@ -137,19 +79,82 @@ def users(request: Request):
     return templates.TemplateResponse("users.html", {"request": request})
 
 
-from .database.models import Project
-from sqlalchemy.orm import Session
-from .database.core import get_db
+from sqlalchemy import table, column, select, text
+from sqlalchemy import MetaData, Table
+from backend.database.core import engine
+import pandas as pd
 
 
-@app.get("/projects", response_class=HTMLResponse)
+@app.get("/projects", response_class=HTMLResponse, tags=["projects"])
 def projects(request: Request, db: Session = Depends(get_db)):
-    projects = db.query(Project).all()
+    projects = db.query(Project).all()  # old
 
+    metadata = MetaData()
+    with engine.connect() as connection:
+        projects_df = pd.read_sql_table("projects", con=connection)
+        job_scheduled_df = pd.read_sql_table("apscheduler_jobs", con=connection)
+        job_scheduled_df = job_scheduled_df[["id", "next_run_time"]]
+        job_scheduled_df["scheduler_group_code"] = job_scheduled_df["id"].apply(
+            lambda x: x.split("_")[0]
+        )
+        job_scheduled_df = job_scheduled_df.groupby("scheduler_group_code").agg(
+            {
+                "id": lambda x: list(x),
+                "next_run_time": lambda x: list(x),
+            },
+        )
+        projects_df = pd.merge(
+            projects_df,
+            job_scheduled_df,
+            left_on="project_code",
+            right_on="scheduler_group_code",  # have many scheduler_id
+            how="left",
+        )
+
+        projects_df.loc[projects_df["id"].isnull(), ["id"]] = projects_df.loc[
+            projects_df["id"].isnull(), "id"
+        ].apply(lambda x: [])
+
+        # print(projects_df)
+        # print(job_scheduled_df)
+
+        # projects = projects_df['project_id', 'title', 'run_path', 'project_code', 'id', 'next_run_time'].to_dict(orient=records)
+        projects = projects_df.to_dict(orient="records")
+        print(projects)
     return templates.TemplateResponse(
         "projects.html",
         {"request": request, "projects": projects},
     )
+
+
+# @app.post("/projects/scheduled", tags=["projects"])
+# def projects(project_code: str, db: Session = Depends(get_db)):
+#     # scheduled job, slow code
+#     metadata = MetaData()
+#     with engine.connect() as connection:
+#         # metadata.reflect(connection)
+#         apscheduler_jobs_table = Table(
+#             "apscheduler_jobs", metadata, autoload_with=connection
+#         )
+#         result = connection.execute(apscheduler_jobs_table.select())
+#         print(result.fetchall())
+#         projects_df = pd.read_sql_table("projects", con=connection)
+#         job_scheduled_df = pd.read_sql_table("apscheduler_jobs", con=connection)
+#         job_scheduled_df = job_scheduled_df[["id", "next_run_time"]]
+#         job_scheduled_df["scheduler_group_code"] = job_scheduled_df["id"].apply(
+#             lambda x: x.split("_")[0]
+#         )
+#         projects_df = pd.merge(
+#             projects_df,
+#             job_scheduled_df,
+#             left_on="project_code",
+#             right_on="scheduler_group_code",  # have many scheduler_id
+#             how="left",
+#         )
+#         print(projects_df)
+#         print(job_scheduled_df)
+#         return projects_df
+#     #
 
 
 @app.post("/slackbot")
@@ -186,91 +191,15 @@ def get_status(task_id):
     return result
 
 
-# Add job schedule on the fly
-@app.get(
-    "/schedule/show_schedules/",
-    response_model=ss.CurrentScheduledJobsResponse,
-    tags=["schedule"],
-)
-async def get_scheduled_syncs():
-    """
-    Will provide a list of currently Scheduled Tasks
-    """
-    schedules = []
-    for job in Schedule.get_jobs():
-        schedules.append(
-            {
-                "job_id": str(job.id),
-                "run_frequency": str(job.trigger),
-                "next_run": str(job.next_run_time),
-            }
-        )
-    return {"jobs": schedules}
-
-
-def test_job(name):
-    logger.info(f"###!!!!!!!!!!!!! Tick! call by apscheduler job {name}")
-    return "hello, %s" % name
-
-
-@app.post(
-    "/schedule/add_job/", response_model=ss.JobCreateDeleteResponse, tags=["schedule"]
-)
-async def add_daily_job(name):
-    exec_time = datetime.now() + timedelta(minutes=1)
-    hour = exec_time.strftime("%H")
-    minute = exec_time.strftime("%M")
-    # here to choose 'cron'
-    # In addition, job_id can be set according to your own situation, it will be used for remove_job
-    just_add = Schedule.add_job(test_job, "cron", hour=hour, minute=minute, args=[name])
-    return {"scheduled": True, "job_id": just_add.id}
-
-
-@app.post(
-    "/schedule/add_job2/", response_model=ss.JobCreateDeleteResponse, tags=["schedule"]
-)
-async def add_interval_job(name, time_in_seconds: int = 60):
-    """
-    Add a New Job to a Schedule
-    """
-    my_job = Schedule.add_job(
-        test_job, "interval", seconds=time_in_seconds, id=name, args=[name]
-    )
-    return {"scheduled": True, "job_id": my_job.id}
-
-
-from backend.proj.service import run_team_project, aps_celery1
-
-
-@app.post(
-    "/schedule/add_project/",
-    response_model=ss.JobCreateDeleteResponse,
-    tags=["schedule"],
-)
-async def add_project(file_path, time_in_seconds: int = 60):
-    my_job = Schedule.add_job(
-        aps_celery1, "interval", seconds=time_in_seconds, id=file_path, args=[file_path]
-    )
-    return {"scheduled": True, "job_id": my_job.id}
-
-
-@app.delete(
-    "/schedule/remove_job/",
-    response_model=ss.JobCreateDeleteResponse,
-    tags=["schedule"],
-)
-async def remove_job(name):
-    """
-    Remove a Job from a Schedule
-    """
-    Schedule.remove_job(name)
-    return {"scheduled": False, "job_id": name}
-
-
-# logo
+# image
 @app.get("/logo", response_class=FileResponse)
 async def logo():
-    return "storage/assets/image/task.jpg"
+    return "backend/storage/assets/image/task.jpg"
+
+
+@app.get("/favicon.ico", response_class=FileResponse)
+async def favicon():
+    return "backend/storage/assets/image/ironman.ico"
 
 
 # if __name__ == "__main__":

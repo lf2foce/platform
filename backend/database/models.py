@@ -8,8 +8,9 @@ from sqlalchemy import (
     ForeignKey,
     Text,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 from .core import Base
+
 from slugify import slugify
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
@@ -36,7 +37,7 @@ class Item(Base):
     title = Column(Text, index=True)
     knowledge = Column(Text, index=True)
     description = Column(Text, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
 
     owner = relationship("User", back_populates="items")
 
@@ -44,21 +45,22 @@ class Item(Base):
 class Project(Base):
     __tablename__ = "projects"
 
-    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), index=True)
-    run_path = Column(String(50), index=True)
+    run_path = Column(String(50), index=True, unique=True, nullable=False)
     description = Column(Text)
     scheduled_at = Column(Text)
     tags = Column(Text)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    project_code = Column(String(255))
 
+    owner_id = Column(Integer, ForeignKey("users.id"))
     proj_owner = relationship("User", back_populates="projects")
 
 
 class Organization(Base):
     __tablename__ = "organization"
     id = Column(Integer, primary_key=True)
-    name = Column(String(255))
+    name = Column(String(255), unique=True)
     default = Column(Boolean)
     description = Column(Text)
 

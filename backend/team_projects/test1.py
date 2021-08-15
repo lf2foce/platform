@@ -1,1 +1,1 @@
-print("xin chao zzz")
+print("from test1.py")

@@ -34,8 +34,11 @@ class JobCreateDeleteResponse(BaseModel):
         title="Whether the job was scheduler or not",
         description="Whether the job was scheduler or not",
     )
-    job_id: str = Field(
+    job_id: Optional[str] = Field(
         title="The Job ID in APScheduler", description="The Job ID in APScheduler"
+    )
+    status: Optional[str] = Field(
+        title="The Job status in APScheduler", description="Reason"
     )
 
     class Config:

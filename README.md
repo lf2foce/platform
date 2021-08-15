@@ -37,20 +37,19 @@
         
 ## Run development server 
 
-        cd backend
 
-1. Tạo file `.env` cho config.py  (optional)
+1. Tạo file `backend/.env` cho config.py  (optional)
 
         DATABASE_HOSTNAME = localhost  
         DATABASE_CREDENTIALS = 'admin:12345678'  
 
 2. Run webserver
 
-        uvicorn main:app --reload
+        uvicorn backend.main:app --reload
 
 3. Run celery worker 
 
-        celery -A proj worker  -l info  
+        celery -A backend.proj worker  -l info -E  
 
      `proj` - folder chứa file celery config  
      `-l info` - option hiển thị log ở command line  
@@ -59,13 +58,8 @@
 
 4. Run flower, đổi port --port=5555
 
-        celery -A proj flower --address=127.0.0.1  
-
-5. To start the celery beat service (optional):
-
-        celery -A proj beat
-
-    `-s /path/to/celerybeat-schedule` - option đổi tên db schedule    
+        celery -A backend.proj flower --broker= --address=127.0.0.1 --port=5555 
+ 
 
 ## Open web page
 Home page
@@ -93,9 +87,10 @@ http://127.0.0.1:5555
 **App structure**
 - `views.py` - Routes  
 - `service` - API Function  
-- `models` -  Model / sql Object of Feature (models của riêng app)  
-- `backend/schemas.py` & `backend/models.py` - shared model of whole platform  
-- `backend/proj` - Default folder for Celery  
+- `database/models` -  Model / sql Object of Feature (models của riêng app)  
+- `backend/schemas` - All schemas (data validation) here
+- `backend/proj` - Default folder for Celery & Projects structure
+- `backend/scheduler` - Config type of schedule here 
 
 **Monolithic views**
 - `/static` - for Style, javascript  
@@ -112,8 +107,12 @@ http://127.0.0.1:5555
 - `#database/core.py`  Create SQLAlchemy models from the `Base` class and import to  models.py of each Project  
 - `orm_mode = True` - Pydantic's orm_mode will tell the Pydantic model to read the data even if it is not a dict  
 - `SessionLocal` - instant class of database session  
-- `Session` from  `sqlalchemy.orm` - declare the type of the db parameters  
+- `Session` from  `sqlalchemy.orm` - The session is an SQLAlchemy object used to communicate with SQLite in the Python example programs
 - `Alembic` module - initialize your database (create tables, etc) & migrations
+
+- Flow: Add job schedule, đến thời điểm triggle (`cron`, `interval`) sẽ vào hàng đợi của Celery
+- Mỗi lần thay đổi logic ở `@task` của celery phải reset lại worker
+- Không cần phải restart server khi hẹn giờ cho task
 ## References
 **Package** 
 
@@ -122,13 +121,18 @@ https://fastapi.tiangolo.com/tutorial/first-steps/
 https://fastapi.tiangolo.com/tutorial/sql-databases/
 
 sqlAchemy  
-https://fastapi.tiangolo.com/tutorial/sql-databases/  
+https://docs.sqlalchemy.org/en/14/dialects/mysql.html
+https://docs.sqlalchemy.org/en/14/orm/session_basics.html#what-does-the-session-do  
+https://stackoverflow.com/questions/34322471/sqlalchemy-engine-connection-and-session-difference
 
-alembic - Module migration
-https://alembic.sqlalchemy.org/en/latest/
+Python scheduler
+https://apscheduler.readthedocs.io/en/stable/
 
 celery redis flower - task queue  
 https://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#first-steps  
+
+alembic - Database migration (optional)
+https://alembic.sqlalchemy.org/en/latest/
 
 plotly - chart  
 https://plotly.com/javascript/  

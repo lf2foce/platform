@@ -32,7 +32,8 @@
   {% for project in projects %}
   <div class="col-sm-5 mb-3">
     <h6>{{project.title}} </h6>
-    ~/{{project.run_path}}
+    
+    ~/team_projects/{{project.run_path}}<br>
     {% for tag in project.tags.split(';') %}
       <span class="badge bg-secondary rounded-pill">{{tag}}</span>
     {% endfor %}
@@ -41,7 +42,9 @@
   <div class="col-sm-7">
     <div class="row">
       <div class="col-sm-4">
-        Run Every day
+          {% for job_schedule_id in project['id'] %}
+            <span class="badge bg-secondary rounded-pill">{{job_schedule_id}}</span>
+          {% endfor %} 
       </div>
       <div class="col-sm-8">
         <a class="card-link text-decoration-none" href="/users">

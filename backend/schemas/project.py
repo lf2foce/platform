@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class ProjectBase(BaseModel):
     title: str
-    description: Optional[str] = None
+    description: str
     run_path: str
 
 
@@ -14,7 +14,7 @@ class ProjectCreate(ProjectBase):
 
 
 class Project(ProjectBase):
-    id: int
+    project_id: int
     owner_id: int
 
     class Config:
