@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 import base64
 from urllib import parse
 from typing import List
@@ -14,10 +15,12 @@ config = Config("backend/.env")
 
 # static
 TIMEZONE = "Asia/Ho_Chi_Minh"
-DEFAULT_STATIC_DIR = os.path.join(
-    os.path.abspath(os.path.dirname(__file__)), "static/oa_platform"
-)
-STATIC_DIR = config("STATIC_DIR", default=DEFAULT_STATIC_DIR)
+
+BASE_PATH = Path(__file__).parent
+PROJECTS_PATH = BASE_PATH / "team_projects"
+DEFAULT_STATIC_PATH = BASE_PATH / "static"
+TEMPLATE_PATH = BASE_PATH / "templates"
+STATIC_PATH = config("STATIC_PATH", default=DEFAULT_STATIC_PATH)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=CommaSeparatedStrings)
 SECRET_KEY = config("SECRET_KEY", cast=Secret)

@@ -5,14 +5,15 @@ import os
 
 from fastapi import APIRouter, Depends, Request, HTTPException, Body
 from fastapi.templating import Jinja2Templates
+from pydantic.error_wrappers import ErrorWrapper, ValidationError
 from sqlalchemy.orm import Session
 from sqlalchemy import table, column
 
 from backend.database.core import get_db
 from backend.database import models
-from backend.schemas import project as project_schema
-from .service import run_team_project
-from .service import create_user_project
+from backend.schemas.project import ProjectRead, ProjectCreate
+from backend.schemas.exceptions import ExistsError
+from .service import run_team_project, create_user_project
 from ..config import _DATABASE_CREDENTIAL_PASSWORD, _DATABASE_CREDENTIAL_USER
 
 templates = Jinja2Templates(directory="templates")
@@ -28,13 +29,32 @@ def project_info(skip: int = 0, limit: int = 100, db: Session = Depends(get_db))
     return proj
 
 
-@router.post("/{user_id}/projects/", response_model=project_schema.Project)
+@router.post("/{user_id}/projects/", response_model=ProjectRead)
 def create_project_for_user(
     user_id: int,
-    project: project_schema.ProjectCreate,
+    project: ProjectCreate,
     db: Session = Depends(get_db),
 ):
-    return create_user_project(db=db, project=project, user_id=user_id)
+    """Create a new service."""
+    # project = (
+    #     db.query(models.Project)
+    #     .filter(models.Project.run_path == project.run_path)
+    #     .first()
+    # )
+
+    # if project:
+    #     raise ValidationError(
+    #         [
+    #             ErrorWrapper(
+    #                 ExistsError(msg="A project with this project_id already exists."),
+    #                 loc="project_id",
+    #             )
+    #         ],
+    #         model=ProjectCreate,
+    #     )
+
+    project = create_user_project(db=db, project=project, user_id=user_id)
+    return project
 
 
 # without aps

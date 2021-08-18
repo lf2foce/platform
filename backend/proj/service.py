@@ -8,14 +8,12 @@ import subprocess
 from sqlalchemy.orm import Session
 from backend.database import models
 import backend.schemas.project as project_schema
+from ..config import PROJECTS_PATH
 
 logger = logging.getLogger(__name__)
 
-BASE_PATH = Path(__file__).parents[1]  # backend/
 LOGS_PATH = Path(__file__).parent.resolve() / "logs"
 
-
-projects_path = BASE_PATH / "team_projects"
 python_executable = "python3"
 
 
@@ -43,7 +41,7 @@ def create_user_project(
 
 @app.task(name="python_subprocess_schedule")
 def run_team_project_scheduler(file_path, project_schedule_id, executor=None):
-    file_path = projects_path / file_path
+    file_path = PROJECTS_PATH / file_path
     print("file name: ", str(file_path))
     if file_path.exists():
         result_success = subprocess.run(
@@ -52,7 +50,8 @@ def run_team_project_scheduler(file_path, project_schedule_id, executor=None):
             stdout=subprocess.PIPE,
             text=True,
         )
-        logger.info(result_success.stdout)
+        # logger.info(result_success.stdout)
+
         return {
             "status": True,
             "result": result_success.stdout,
@@ -64,7 +63,7 @@ def run_team_project_scheduler(file_path, project_schedule_id, executor=None):
 
 def aps_celery1(project_file_name, project_schedule_id):
     # print(f"#####aps_cel called. {project_schedule_id}")
-    # logger.info(f"###!!!!!!!!!!!!! Tick! call by apscheduler job {project_schedule_id}")
+    logger.info(f"###!!!!!!!!!!!!! Tick! call by apscheduler job {project_schedule_id}")
     result = run_team_project_scheduler.delay(project_file_name, project_schedule_id)
     # logger.info(result)
     return "hello, %s" % project_schedule_id  # k print ra
@@ -74,7 +73,7 @@ def aps_celery1(project_file_name, project_schedule_id):
 @app.task(name="python_subprocess")
 def run_team_project(file_path, executor=None):
     file_name = file_path.split(".")[0].replace("/", ".")
-    file_path = projects_path / file_path
+    file_path = PROJECTS_PATH / file_path
     print("file path: ", str(file_path))
     if file_path.exists():
         Path(LOGS_PATH / file_name).mkdir(parents=True, exist_ok=True)

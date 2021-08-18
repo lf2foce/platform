@@ -19,41 +19,44 @@
 
 
 <div class="row">
-  <div class="col-sm-5"><h6 class="text-muted">Project</h6></div>
-  <div class="col-sm-7">
+  <div class="col-sm-3"><h6 class="text-muted">Project</h6></div>
+  <div class="col-sm-9">
     <div class="row">
-      <div class="col-sm-4"><h6 class="text-muted" >Schedule</h6></div>
+      <div class="col-sm-5"><h6 class="text-muted" >Next run</h6></div>
 
-      <div class="col-sm-8"><h6 class="text-muted">Action</h6></div>
+      <div class="col-sm-7"><h6 class="text-muted">Action</h6></div>
     </div>
   </div>
   <hr>
 
   {% for project in projects %}
-  <div class="col-sm-5 mb-3">
+  <div class="col-sm-3 mb-3">
     <h6>{{project.title}} </h6>
     
     ~/team_projects/{{project.run_path}}<br>
     {% for tag in project.tags.split(';') %}
       <span class="badge bg-secondary rounded-pill">{{tag}}</span>
     {% endfor %}
+
     
   </div>
-  <div class="col-sm-7">
+  <div class="col-sm-9">
     <div class="row">
-      <div class="col-sm-4">
-          {% for job_schedule_id in project['id'] %}
-            <span class="badge bg-secondary rounded-pill">{{job_schedule_id}}</span>
+      <div class="col-sm-5">
+        <ul class="nav flex-column">
+          {% for job_schedule in project.schedules %}
+            <li>{{job_schedule.id}}: <span id='{{job_schedule.id}}'><strong>{{job_schedule.next_run_time|datetime_format }}</strong></span></li>
           {% endfor %} 
+        </ul>
       </div>
-      <div class="col-sm-8">
+      <div class="col-sm-7">
         <a class="card-link text-decoration-none" href="/users">
           <span data-feather="play-circle"></span>
           Trigger
         </a>
         <a class="card-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="{{title}}">
           <span data-feather="clock"></span>
-          Schedule
+          Scheduled
         </a>
         <a class="card-link text-decoration-none" href="/users">
           <span data-feather="activity"></span>
@@ -84,18 +87,19 @@
       <div class="modal-body">
         <form>
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Cron string</label>
-            <input type="text" class="form-control" id="recipient-name">
+            <label for="schedule-desc" class="col-form-label">Description</label>
+            <textarea class="form-control" id="schedule-desc"></textarea>
+            
           </div>
           <div class="mb-3">
-            <label for="message-text" class="col-form-label">description</label>
-            <textarea class="form-control" id="message-text"></textarea>
+            <label for="second-interval" class="col-form-label">Time interval</label>
+            <input type="text" class="form-control" id="second-interval">
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-primary" id='submit-schedule'>Save changes</button>
       </div>
     </div>
   </div>
@@ -118,5 +122,35 @@
     modalTitle.textContent = 'New message to ' + recipient
     modalBodyInput.value = recipient
   })
+
+
+</script>
+<script>
+
+var submitSchedule = document.getElementById("submit-schedule")
+
+submitSchedule.addEventListener("click", function(){ 
+  var secondsVar = document.getElementById('second-interval').value
+  var scheduleDesc = document.getElementById('schedule-desc').value
+
+
+  console.log(secondsVar)
+  function sendProjectSchedule() {
+    fetch('/schedule/add_project/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ "project_id": 1, "desc": scheduleDesc, "time_in_seconds": secondsVar }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      // getStatus(data.task_id, data.task_name)
+      console.log(data)
+    })
+  }
+
+  sendProjectSchedule()
+})    
 </script>
 {%endblock%}

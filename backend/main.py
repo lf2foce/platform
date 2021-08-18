@@ -9,10 +9,14 @@ from fastapi import Depends, FastAPI, HTTPException, Request, Body
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from jinja2 import pass_environment, Environment
+
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from celery.result import AsyncResult
+
+from backend import config
 
 from .scheduler.views import router as schedule_router
 from .auth.views import user_router
@@ -32,12 +36,25 @@ from .proj.celery import app as celery_app
 from .proj.tasks import create_task
 from .notification.service import send_slack_message
 
+# Base.metadata.drop_all(engine)  # TODO phải bỏ ra khi deploy
 Base.metadata.create_all(bind=engine)  # fastapi docs, init create DB
 
 app = FastAPI()
 
-app.mount("/backend/static", StaticFiles(directory="backend/static"), name="static")
-templates = Jinja2Templates(directory="backend/templates")
+# js, css
+app.mount("/static", StaticFiles(directory=str(config.STATIC_PATH)), name="static")
+# template HTML
+templates = Jinja2Templates(directory=str(config.TEMPLATE_PATH))
+
+import dateutil
+
+
+def datetime_format(float_date, format="%Y-%m-%d %H:%M:%S"):
+    return datetime.fromtimestamp(int(float_date)).strftime(format)
+
+
+templates.env.filters["datetime_format"] = datetime_format
+
 
 origins = [
     "http://localhost",
@@ -51,6 +68,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -87,74 +105,13 @@ import pandas as pd
 
 @app.get("/projects", response_class=HTMLResponse, tags=["projects"])
 def projects(request: Request, db: Session = Depends(get_db)):
-    projects = db.query(Project).all()  # old
+    projects = db.query(Project).all()
+    print(projects)
 
-    metadata = MetaData()
-    with engine.connect() as connection:
-        projects_df = pd.read_sql_table("projects", con=connection)
-        job_scheduled_df = pd.read_sql_table("apscheduler_jobs", con=connection)
-        job_scheduled_df = job_scheduled_df[["id", "next_run_time"]]
-        job_scheduled_df["scheduler_group_code"] = job_scheduled_df["id"].apply(
-            lambda x: x.split("_")[0]
-        )
-        job_scheduled_df = job_scheduled_df.groupby("scheduler_group_code").agg(
-            {
-                "id": lambda x: list(x),
-                "next_run_time": lambda x: list(x),
-            },
-        )
-        projects_df = pd.merge(
-            projects_df,
-            job_scheduled_df,
-            left_on="project_code",
-            right_on="scheduler_group_code",  # have many scheduler_id
-            how="left",
-        )
-
-        projects_df.loc[projects_df["id"].isnull(), ["id"]] = projects_df.loc[
-            projects_df["id"].isnull(), "id"
-        ].apply(lambda x: [])
-
-        # print(projects_df)
-        # print(job_scheduled_df)
-
-        # projects = projects_df['project_id', 'title', 'run_path', 'project_code', 'id', 'next_run_time'].to_dict(orient=records)
-        projects = projects_df.to_dict(orient="records")
-        print(projects)
     return templates.TemplateResponse(
         "projects.html",
         {"request": request, "projects": projects},
     )
-
-
-# @app.post("/projects/scheduled", tags=["projects"])
-# def projects(project_code: str, db: Session = Depends(get_db)):
-#     # scheduled job, slow code
-#     metadata = MetaData()
-#     with engine.connect() as connection:
-#         # metadata.reflect(connection)
-#         apscheduler_jobs_table = Table(
-#             "apscheduler_jobs", metadata, autoload_with=connection
-#         )
-#         result = connection.execute(apscheduler_jobs_table.select())
-#         print(result.fetchall())
-#         projects_df = pd.read_sql_table("projects", con=connection)
-#         job_scheduled_df = pd.read_sql_table("apscheduler_jobs", con=connection)
-#         job_scheduled_df = job_scheduled_df[["id", "next_run_time"]]
-#         job_scheduled_df["scheduler_group_code"] = job_scheduled_df["id"].apply(
-#             lambda x: x.split("_")[0]
-#         )
-#         projects_df = pd.merge(
-#             projects_df,
-#             job_scheduled_df,
-#             left_on="project_code",
-#             right_on="scheduler_group_code",  # have many scheduler_id
-#             how="left",
-#         )
-#         print(projects_df)
-#         print(job_scheduled_df)
-#         return projects_df
-#     #
 
 
 @app.post("/slackbot")

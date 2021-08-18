@@ -13,7 +13,7 @@ class ProjectCreate(ProjectBase):
     scheduled_at: str
 
 
-class Project(ProjectBase):
+class ProjectRead(ProjectBase):
     project_id: int
     owner_id: int
 

@@ -119,6 +119,10 @@ http://127.0.0.1:5555
 fastapi - web framework  
 https://fastapi.tiangolo.com/tutorial/first-steps/  
 https://fastapi.tiangolo.com/tutorial/sql-databases/
+https://towardsdatascience.com/fastapi-cloud-database-loading-with-python-1f531f1d438a
+
+jinja template 
+https://jinja.palletsprojects.com/en/3.0.x/templates/
 
 sqlAchemy  
 https://docs.sqlalchemy.org/en/14/dialects/mysql.html

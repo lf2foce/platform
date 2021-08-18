@@ -7,12 +7,17 @@ from sqlalchemy import (
     event,
     ForeignKey,
     Text,
+    Float,
+    LargeBinary,
+    TIMESTAMP,
+    DateTime,
 )
 from sqlalchemy.orm import relationship, validates
 from .core import Base
 
 from slugify import slugify
 from sqlalchemy.ext.hybrid import hybrid_property
+
 from datetime import datetime
 
 # from sqlalchemy.ext.declarative import declared_attr
@@ -34,11 +39,11 @@ class Item(Base):
     __tablename__ = "items"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(Text, index=True)
-    knowledge = Column(Text, index=True)
-    description = Column(Text, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    title = Column(String(255), index=True)
+    knowledge = Column(Text)
+    description = Column(Text)
 
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     owner = relationship("User", back_populates="items")
 
 
@@ -55,6 +60,21 @@ class Project(Base):
 
     owner_id = Column(Integer, ForeignKey("users.id"))
     proj_owner = relationship("User", back_populates="projects")
+
+    schedules = relationship("APSchedulerJobsTable", back_populates="schedule_owner")
+
+
+class APSchedulerJobsTable(Base):
+    # TODO: try to connect existing table
+    __tablename__ = "apscheduler_jobs"
+
+    id = Column(String(255), primary_key=True)  # , autoincrement=True
+    next_run_time = Column(Float)
+    job_state = Column(LargeBinary)
+    # bổ sung
+    desc = Column(String(255))
+    project_id = Column(Integer, ForeignKey("projects.project_id", ondelete="CASCADE"))
+    schedule_owner = relationship("Project", back_populates="schedules")
 
 
 class Organization(Base):

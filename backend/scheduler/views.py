@@ -130,36 +130,36 @@ async def add_interval_job(name, time_in_seconds: int = 60):
     return {"scheduled": True, "job_id": my_job.id}
 
 
+from .service import create_schedule_for_project
+from pydantic import BaseModel
+
+
+class IntervalScheduleCreate(BaseModel):
+    project_id: int
+    desc: str
+    time_in_seconds: int = 60
+
+
 @router.post(
     "/add_project/",
     response_model=ss.JobCreateDeleteResponse,
     tags=["schedule"],
 )
-def add_project(rel_file_path: str, desc: str, time_in_seconds: int = 60):
-    projects_path = BASE_PATH / "team_projects"
-    full_path = projects_path / rel_file_path
-    project_schedule_id = (
-        rel_file_path.split(".")[0].replace("/", ".") + "_" + str(desc)
+def add_project_interval(
+    # project_id: int,
+    # desc: str,
+    # time_in_seconds: int = 60,
+    interval_schedule: IntervalScheduleCreate,
+    db: Session = Depends(get_db),
+):
+    project_schedule = create_schedule_for_project(
+        db,
+        interval_schedule.project_id,
+        interval_schedule.desc,
+        interval_schedule.time_in_seconds,
+        Schedule=Schedule,
     )
-
-    job_ids = [str(job.id) for job in Schedule.get_jobs()]
-
-    if project_schedule_id not in job_ids:
-        if full_path.exists():
-            my_job = Schedule.add_job(
-                aps_celery1,
-                "interval",
-                seconds=time_in_seconds,
-                id=project_schedule_id,
-                args=(rel_file_path, project_schedule_id),
-            )
-            return {"scheduled": True, "job_id": my_job.id, "status": "success"}
-        return {
-            "scheduled": False,
-            "job_id": None,
-            "status": "file path does not exist",
-        }
-    return {"scheduled": False, "job_id": None, "status": "job-schedule id is existed"}
+    return project_schedule
 
 
 @router.delete(

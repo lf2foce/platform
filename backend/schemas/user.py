@@ -1,16 +1,17 @@
 from typing import List, Optional
 from pydantic import BaseModel
 from .item import Item
-from .project import Project
+from .project import ProjectRead
 
 # Pydantic models...
 class OABase(BaseModel):
     class Config:
         """
-        orm_mode = True allows the app to take ORM objects and translate them into responses automatically. 
-        This automation saves us from manually taking data out of ORM, making it into a dictionary, 
+        orm_mode = True allows the app to take ORM objects and translate them into responses automatically.
+        This automation saves us from manually taking data out of ORM, making it into a dictionary,
         then loading it in with Pydantic.
         """
+
         orm_mode = True
         # bên dưới từ dispatch
         # validate_assignment = True
@@ -30,7 +31,7 @@ class User(UserBase):
     id: int
     is_active: bool
     items: List[Item] = []
-    projects: List[Project] = []
+    projects: List[ProjectRead] = []
 
     class Config:
         orm_mode = True
