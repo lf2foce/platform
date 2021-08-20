@@ -7,13 +7,13 @@ from sqlalchemy.orm import sessionmaker
 from backend import config
 
 
-# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
+# SQLALCHEMY_DATABASE_URI = "postgresql://user:password@postgresserver/db"
 
 engine = create_engine(
-    str(config.SQLALCHEMY_DATABASE_URL),
+    str(config.SQLALCHEMY_DATABASE_URI),
     # connect_args={"check_same_thread": False},  # nếu dùng SQLite
 )
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(bind=engine, future=True)  # future=True 2.0 syntax
 
 Base = declarative_base()
 

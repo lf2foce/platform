@@ -125,6 +125,7 @@ jinja template
 https://jinja.palletsprojects.com/en/3.0.x/templates/
 
 sqlAchemy  
+https://docs.sqlalchemy.org/en/14/tutorial/dbapi_transactions.html
 https://docs.sqlalchemy.org/en/14/dialects/mysql.html
 https://docs.sqlalchemy.org/en/14/orm/session_basics.html#what-does-the-session-do  
 https://stackoverflow.com/questions/34322471/sqlalchemy-engine-connection-and-session-difference

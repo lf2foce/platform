@@ -1,13 +1,12 @@
 from backend.database.models import APSchedulerJobsTable, Project
 from backend.proj.service import aps_celery1
-from ..config import BASE_PATH, PROJECTS_PATH
+from ..config import BASE_PATH, PROJECTS_PATH, TIMEZONE
 
 
 def create_schedule_for_project(db, project_id, desc, time_in_seconds, Schedule):
     current_project = db.query(Project).filter(Project.project_id == project_id).first()
+    db.close()  # without this cause error
     rel_file_path = current_project.run_path
-    db.commit()
-    # commit before open new connection
     full_path = PROJECTS_PATH / rel_file_path
     project_schedule_id = (
         rel_file_path.split(".")[0].replace("/", ".") + "_" + str(desc)
@@ -23,16 +22,24 @@ def create_schedule_for_project(db, project_id, desc, time_in_seconds, Schedule)
                 seconds=time_in_seconds,
                 id=project_schedule_id,
                 args=(rel_file_path, project_schedule_id),
+                # replace_existing=True
             )
-            # time.sleep(1)
+            # Cách 1
+            # schedule = (
+            #     db.query(APSchedulerJobsTable)
+            #     .filter(APSchedulerJobsTable.id == project_schedule_id)
+            #     .first()
+            # )
+            # schedule.project_id = project_id
+            # db.add(schedule)
+
+            # Cách 2
             schedule = (
                 db.query(APSchedulerJobsTable)
                 .filter(APSchedulerJobsTable.id == project_schedule_id)
-                .first()
+                .update({"project_id": project_id})
             )
 
-            schedule.project_id = project_id
-            db.add(schedule)
             db.commit()
 
             return {"scheduled": True, "job_id": my_job.id, "status": "success"}

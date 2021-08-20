@@ -17,7 +17,7 @@ from apscheduler.events import EVENT_JOB_ERROR
 from backend.database.core import get_db
 from backend.schemas import scheduler as ss  # schedule schema
 from backend.proj.service import aps_celery1
-from ..config import SQLALCHEMY_DATABASE_URL, TIMEZONE
+from ..config import SQLALCHEMY_DATABASE_URI, TIMEZONE
 
 
 router = APIRouter()
@@ -43,7 +43,7 @@ async def load_schedule_or_create_blank():
     global Schedule
     try:
         jobstores = {
-            "default": SQLAlchemyJobStore(url=SQLALCHEMY_DATABASE_URL),
+            "default": SQLAlchemyJobStore(url=SQLALCHEMY_DATABASE_URI),
             # "default": RedisJobStore(host="localhost", port=6379)
         }
         executors = {
@@ -119,17 +119,6 @@ async def add_daily_job(name):
     return {"scheduled": True, "job_id": just_add.id}
 
 
-@router.post("/add_job2/", response_model=ss.JobCreateDeleteResponse, tags=["schedule"])
-async def add_interval_job(name, time_in_seconds: int = 60):
-    """
-    Add a New Job to a Schedule
-    """
-    my_job = Schedule.add_job(
-        test_job, "interval", seconds=time_in_seconds, id=name, args=[name]
-    )
-    return {"scheduled": True, "job_id": my_job.id}
-
-
 from .service import create_schedule_for_project
 from pydantic import BaseModel
 
@@ -153,10 +142,10 @@ def add_project_interval(
     db: Session = Depends(get_db),
 ):
     project_schedule = create_schedule_for_project(
-        db,
-        interval_schedule.project_id,
-        interval_schedule.desc,
-        interval_schedule.time_in_seconds,
+        db=db,
+        project_id=interval_schedule.project_id,
+        desc=interval_schedule.desc,
+        time_in_seconds=interval_schedule.time_in_seconds,
         Schedule=Schedule,
     )
     return project_schedule

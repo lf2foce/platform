@@ -9,8 +9,12 @@ from sqlalchemy.orm import Session
 from backend.database import models
 import backend.schemas.project as project_schema
 from ..config import PROJECTS_PATH
+from celery.utils.log import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)  # celery logger
+
+celery_logger = logging.getLogger(__name__)
+
 
 LOGS_PATH = Path(__file__).parent.resolve() / "logs"
 
@@ -42,7 +46,6 @@ def create_user_project(
 @app.task(name="python_subprocess_schedule")
 def run_team_project_scheduler(file_path, project_schedule_id, executor=None):
     file_path = PROJECTS_PATH / file_path
-    print("file name: ", str(file_path))
     if file_path.exists():
         result_success = subprocess.run(
             [f"python3 {str(file_path)}"],
@@ -58,18 +61,23 @@ def run_team_project_scheduler(file_path, project_schedule_id, executor=None):
             "project_schedule_id": project_schedule_id,
         }
         # return "executed"
-    return {"status": False, "result": "something wrong"}
+    return {"status": False, "result": "file_path changed"}
 
 
-def aps_celery1(project_file_name, project_schedule_id):
+def aps_celery1(project_file_path, project_schedule_id):
     # print(f"#####aps_cel called. {project_schedule_id}")
     logger.info(f"###!!!!!!!!!!!!! Tick! call by apscheduler job {project_schedule_id}")
-    result = run_team_project_scheduler.delay(project_file_name, project_schedule_id)
+    try:
+        result = run_team_project_scheduler.delay(
+            project_file_path, project_schedule_id
+        )
+    except run_team_project_scheduler.OperationalError as exc:
+        celery_logger.exception("Sending task raised: %r", exc)
     # logger.info(result)
     return "hello, %s" % project_schedule_id  # k print ra
 
 
-# without schedule
+# without schedule - logs to file
 @app.task(name="python_subprocess")
 def run_team_project(file_path, executor=None):
     file_name = file_path.split(".")[0].replace("/", ".")

@@ -46,15 +46,6 @@ app.mount("/static", StaticFiles(directory=str(config.STATIC_PATH)), name="stati
 # template HTML
 templates = Jinja2Templates(directory=str(config.TEMPLATE_PATH))
 
-import dateutil
-
-
-def datetime_format(float_date, format="%Y-%m-%d %H:%M:%S"):
-    return datetime.fromtimestamp(int(float_date)).strftime(format)
-
-
-templates.env.filters["datetime_format"] = datetime_format
-
 
 origins = [
     "http://localhost",
@@ -68,6 +59,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# jinja
+def datetime_format(float_date, format="%Y-%m-%d %H:%M:%S"):
+    return datetime.fromtimestamp(int(float_date)).strftime(format)
 
 
 logging.basicConfig(level=logging.INFO)
@@ -106,7 +100,8 @@ import pandas as pd
 @app.get("/projects", response_class=HTMLResponse, tags=["projects"])
 def projects(request: Request, db: Session = Depends(get_db)):
     projects = db.query(Project).all()
-    print(projects)
+
+    templates.env.filters["datetime_format"] = datetime_format
 
     return templates.TemplateResponse(
         "projects.html",

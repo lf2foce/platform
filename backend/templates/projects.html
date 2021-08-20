@@ -54,7 +54,7 @@
           <span data-feather="play-circle"></span>
           Trigger
         </a>
-        <a class="card-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="{{title}}">
+        <a class="card-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="{{project.project_id}}">
           <span data-feather="clock"></span>
           Scheduled
         </a>
@@ -99,11 +99,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id='submit-schedule'>Save changes</button>
+        <button type="submit" class="btn btn-primary" id='submit-schedule'>Save changes</button>
       </div>
     </div>
   </div>
 </div>
+
 
 <script>
   var exampleModal = document.getElementById('exampleModal')
@@ -119,38 +120,43 @@
     var modalTitle = exampleModal.querySelector('.modal-title')
     var modalBodyInput = exampleModal.querySelector('.modal-body input')
 
-    modalTitle.textContent = 'New message to ' + recipient
-    modalBodyInput.value = recipient
+    modalTitle.textContent = 'Project ID ' + recipient
+    // modalBodyInput.value = recipient
+
+    // submit from here
+    var submitSchedule = document.getElementById("submit-schedule")
+
+    submitSchedule.addEventListener("click", function(){ 
+      var secondsVar = document.getElementById('second-interval').value
+      var scheduleDesc = document.getElementById('schedule-desc').value
+
+
+      console.log(secondsVar)
+      function sendProjectSchedule() {
+        fetch('/schedule/add_project/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ "project_id": recipient, "desc": scheduleDesc, "time_in_seconds": secondsVar }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          // getStatus(data.task_id, data.task_name)
+          console.log(data)
+        })
+      }
+
+      sendProjectSchedule()
+      
+
+    })    
   })
 
 
 </script>
 <script>
 
-var submitSchedule = document.getElementById("submit-schedule")
 
-submitSchedule.addEventListener("click", function(){ 
-  var secondsVar = document.getElementById('second-interval').value
-  var scheduleDesc = document.getElementById('schedule-desc').value
-
-
-  console.log(secondsVar)
-  function sendProjectSchedule() {
-    fetch('/schedule/add_project/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ "project_id": 1, "desc": scheduleDesc, "time_in_seconds": secondsVar }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      // getStatus(data.task_id, data.task_name)
-      console.log(data)
-    })
-  }
-
-  sendProjectSchedule()
-})    
 </script>
 {%endblock%}

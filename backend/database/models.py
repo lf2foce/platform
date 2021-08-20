@@ -1,7 +1,6 @@
 from sqlalchemy import (
     Boolean,
     Column,
-    DateTime,
     Integer,
     String,
     event,
@@ -13,17 +12,33 @@ from sqlalchemy import (
     DateTime,
 )
 from sqlalchemy.orm import relationship, validates
-from .core import Base
+from .core import Base, engine
 
 from slugify import slugify
 from sqlalchemy.ext.hybrid import hybrid_property
-
 from datetime import datetime
 
 # from sqlalchemy.ext.declarative import declared_attr
 
+# auto add created_at & updated_at
+class TimeStampMixin(object):
+    """Timestamping mixin"""
 
-class User(Base):
+    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at._creation_order = 9998
+    updated_at = Column(DateTime, default=datetime.utcnow)
+    updated_at._creation_order = 9998
+
+    @staticmethod
+    def _updated_at(mapper, connection, target):
+        target.updated_at = datetime.utcnow()
+
+    @classmethod
+    def __declare_last__(cls):
+        event.listen(cls, "before_update", cls._updated_at)
+
+
+class User(Base, TimeStampMixin):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -35,7 +50,7 @@ class User(Base):
     projects = relationship("Project", back_populates="proj_owner")
 
 
-class Item(Base):
+class Item(Base, TimeStampMixin):
     __tablename__ = "items"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -47,7 +62,7 @@ class Item(Base):
     owner = relationship("User", back_populates="items")
 
 
-class Project(Base):
+class Project(Base, TimeStampMixin):
     __tablename__ = "projects"
 
     project_id = Column(Integer, primary_key=True, index=True)
@@ -65,14 +80,13 @@ class Project(Base):
 
 
 class APSchedulerJobsTable(Base):
-    # TODO: try to connect existing table
     __tablename__ = "apscheduler_jobs"
 
     id = Column(String(255), primary_key=True)  # , autoincrement=True
     next_run_time = Column(Float)
     job_state = Column(LargeBinary)
-    # bổ sung
     desc = Column(String(255))
+    tag = Column(String(255))
     project_id = Column(Integer, ForeignKey("projects.project_id", ondelete="CASCADE"))
     schedule_owner = relationship("Project", back_populates="schedules")
 
@@ -87,21 +101,3 @@ class Organization(Base):
     @hybrid_property
     def slug(self):
         return slugify(self.name)
-
-
-# chưa dùng
-class TimeStampMixin(object):
-    """Timestamping mixin"""
-
-    created_at = Column(DateTime, default=datetime.utcnow)
-    created_at._creation_order = 9998
-    updated_at = Column(DateTime, default=datetime.utcnow)
-    updated_at._creation_order = 9998
-
-    @staticmethod
-    def _updated_at(mapper, connection, target):
-        target.updated_at = datetime.utcnow()
-
-    @classmethod
-    def __declare_last__(cls):
-        event.listen(cls, "before_update", cls._updated_at)
