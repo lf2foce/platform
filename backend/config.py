@@ -25,7 +25,7 @@ STATIC_PATH = config("STATIC_PATH", default=DEFAULT_STATIC_PATH)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=CommaSeparatedStrings)
 SECRET_KEY = config("SECRET_KEY", cast=Secret)
 
-
+OA_SLACK_HOOK = config("OA_SLACK_HOOK", cast=Secret)
 # database
 DATABASE_HOSTNAME = config("DATABASE_HOSTNAME")
 DATABASE_CREDENTIALS = config("DATABASE_CREDENTIALS", cast=Secret)

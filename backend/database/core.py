@@ -16,8 +16,9 @@ engine = create_engine(
 SessionLocal = sessionmaker(bind=engine, future=True)  # future=True 2.0 syntax
 
 Base = declarative_base()
+# all models inherit from and how they get SQLAlchemy ORM functionality
 
-# print(inspect(engine).get_table_names())
+
 def get_db():
     db = SessionLocal()
     try:
@@ -25,6 +26,8 @@ def get_db():
     finally:
         db.close()
 
+
+# print(inspect(engine).get_table_names())
 
 # # low level
 # from sqlalchemy import MetaData, Table

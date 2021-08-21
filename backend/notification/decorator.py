@@ -2,6 +2,7 @@ import requests
 import functools
 import json
 import logging
+from config import OA_SLACK_HOOK
 
 log = logging.getLogger(__name__)
 
@@ -9,8 +10,8 @@ log = logging.getLogger(__name__)
 def slack_noti(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        url = 'https://hooks.slack.com/services/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'
-        headers = {'Content-type': 'application/json'}
+        url = OA_SLACK_HOOK
+        headers = {"Content-type": "application/json"}
         try:
             message = func(*args, **kwargs)
             data = {"text": str(message)}
@@ -18,10 +19,10 @@ def slack_noti(func):
             response = requests.post(url, headers=headers, data=data)
             return message
         except Exception as e:
-            log.warning(
-                f"Notification not sent. No plugin is active."
-            )    
+            log.warning(f"Notification not sent. No plugin is active.")
+
     return wrapper
+
 
 # @slack_noti
 # def noti(message):
@@ -41,7 +42,7 @@ def slack_noti(func):
 #         # Do something before
 #         value = func(*args, **kwargs)
 #         # Do something after
-#         # return func(*args, **kwargs)  
+#         # return func(*args, **kwargs)
 #         return value
 #     return wrapper
 
