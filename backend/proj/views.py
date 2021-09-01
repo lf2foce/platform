@@ -12,7 +12,7 @@ from sqlalchemy import table, column
 from backend.database.core import get_db
 from backend.database import models
 from backend.schemas.project import ProjectRead, ProjectCreate
-from backend.schemas.exceptions import ExistsError
+from backend.utils.exceptions import ExistsError
 from .service import run_team_project, create_user_project
 from ..config import _DATABASE_CREDENTIAL_PASSWORD, _DATABASE_CREDENTIAL_USER
 

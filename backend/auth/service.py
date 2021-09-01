@@ -46,3 +46,21 @@ def create_user_item(db: Session, item: item_schema.ItemCreate, user_id: int):
     db.commit()
     db.refresh(db_item)
     return db_item
+
+
+# development nflix
+def update(*, db: Session, user: user_schema.User, user_in: user_schema.UserUpdate):
+    """Updates a user."""
+    user_data = user.dict()
+
+    update_data = user_in.dict(exclude={"password"}, skip_defaults=True)
+    for field in user_data:
+        if field in update_data:
+            setattr(user, field, update_data[field])
+
+    if user_in.password:
+        password = bytes(user_in.password, "utf-8")
+        user.password = password
+
+    db.commit()
+    return user

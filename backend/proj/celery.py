@@ -19,7 +19,7 @@ app = Celery(
 )
 
 # Optional configuration, see the application user guide.
-app.conf.update(result_expires=3600, timezone=CELERY_TIMEZONE)
+app.conf.update(result_expires=3600, timezone=CELERY_TIMEZONE, result_extended=True)
 
 # app.conf.CELERY_WORKER_SEND_TASK_EVENTS = True
 # app.conf.timezone = CELERY_TIMEZONE

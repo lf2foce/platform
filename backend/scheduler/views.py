@@ -58,7 +58,7 @@ async def load_schedule_or_create_blank():
             jobstores=jobstores,
             executors=executors,
             job_defaults=job_defaults,
-            timezone=vietnam,
+            # timezone=vietnam,
         )
         # Schedule = AsyncIOScheduler(jobstores=jobstores)
         Schedule.start()

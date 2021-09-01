@@ -1,12 +1,22 @@
+from backend.database.core import SessionLocal
 from backend.database.models import APSchedulerJobsTable, Project
 from backend.proj.service import aps_celery1
 from ..config import BASE_PATH, PROJECTS_PATH, TIMEZONE
+from sqlalchemy.orm import Session
+from backend.database.core import SessionLocal
+
+
+def get_project_path(project_id: int):
+    db = SessionLocal()
+    current_project = db.query(Project).filter(Project.project_id == project_id).first()
+    # db.close()  # without this might cause error
+    return current_project.run_path
 
 
 def create_schedule_for_project(db, project_id, desc, time_in_seconds, Schedule):
-    current_project = db.query(Project).filter(Project.project_id == project_id).first()
-    db.close()  # without this cause error
-    rel_file_path = current_project.run_path
+
+    # rel_file_path = current_project.run_path
+    rel_file_path = get_project_path(project_id)
     full_path = PROJECTS_PATH / rel_file_path
     project_schedule_id = (
         rel_file_path.split(".")[0].replace("/", ".") + "_" + str(desc)

@@ -34,9 +34,11 @@
     <h6>{{project.title}} </h6>
     
     ~/team_projects/{{project.run_path}}<br>
+    {% if project.tags %}
     {% for tag in project.tags.split(';') %}
       <span class="badge bg-secondary rounded-pill">{{tag}}</span>
     {% endfor %}
+    {% endif %}
 
     
   </div>
@@ -85,8 +87,18 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <form id='time_interval' action='/projects/'>
           <div class="mb-3">
+
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+              <label class="form-check-label" for="inlineRadio1">Cron</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+              <label class="form-check-label" for="inlineRadio2">Interval</label>
+            </div><br>
+
             <label for="schedule-desc" class="col-form-label">Description</label>
             <textarea class="form-control" id="schedule-desc"></textarea>
             
@@ -144,6 +156,8 @@
         .then(data => {
           // getStatus(data.task_id, data.task_name)
           console.log(data)
+          document.getElementById("time_interval").submit();
+
         })
       }
 

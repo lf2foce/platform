@@ -13,6 +13,8 @@ log = logging.getLogger(__name__)
 
 config = Config("backend/.env")
 
+LOG_LEVEL = config("LOG_LEVEL", default=logging.WARNING)
+ENV = config("ENV", default="local")
 # static
 TIMEZONE = "Asia/Ho_Chi_Minh"
 

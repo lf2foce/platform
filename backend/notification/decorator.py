@@ -2,7 +2,7 @@ import requests
 import functools
 import json
 import logging
-from config import OA_SLACK_HOOK
+from ..config import OA_SLACK_HOOK
 
 log = logging.getLogger(__name__)
 

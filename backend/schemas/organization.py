@@ -17,10 +17,6 @@ class OrganizationBase(OABase):
     id: Optional[int]
     name: str
     description: Optional[str]
-    default: Optional[bool]
-    banner_enabled: Optional[bool]
-    banner_color: Optional[str]
-    banner_text: Optional[str]
 
 
 class OrganizationCreate(OrganizationBase):

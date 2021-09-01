@@ -30,14 +30,19 @@ from .notification.views import router as slack_router
 
 from .database.core import SessionLocal, engine, Base
 from .database.core import get_db
-from .database.models import Project
+from .database.models import Project, User
+from .database.manage import init_database
 
 from .proj.celery import app as celery_app
 from .proj.tasks import create_task
 from .notification.service import send_slack_message
+from .utils.seeds import seed_example
 
 # Base.metadata.drop_all(engine)  # TODO phải bỏ ra khi deploy
-Base.metadata.create_all(bind=engine)  # fastapi docs, init create DB
+
+# Base.metadata.create_all(bind=engine)  # fastapi docs, init create DB
+init_database(engine=engine)
+# seed_example()
 
 app = FastAPI()
 
