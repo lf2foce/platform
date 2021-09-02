@@ -1,6 +1,7 @@
 from backend.database.core import SessionLocal
-from backend.database.models import APSchedulerJobsTable, Project
+from backend.database.models import APSchedulerJobsTable, Project, Job
 from backend.proj.service import aps_celery1
+from backend.job.service import aps_celery2
 from ..config import BASE_PATH, PROJECTS_PATH, TIMEZONE
 from sqlalchemy.orm import Session
 from backend.database.core import SessionLocal
@@ -11,6 +12,13 @@ def get_project_path(project_id: int):
     current_project = db.query(Project).filter(Project.project_id == project_id).first()
     # db.close()  # without this might cause error
     return current_project.run_path
+
+
+def get_job_path(job_id: int):
+    db = SessionLocal()
+    current_job = db.query(Job).filter(Job.job_id == job_id).first()
+    # db.close()  # without this might cause error
+    return current_job.run_path
 
 
 def create_schedule_for_project(db, project_id, desc, time_in_seconds, Schedule):
@@ -44,6 +52,44 @@ def create_schedule_for_project(db, project_id, desc, time_in_seconds, Schedule)
             # db.add(schedule)
 
             # Cách 2
+            schedule = (
+                db.query(APSchedulerJobsTable)
+                .filter(APSchedulerJobsTable.id == project_schedule_id)
+                .update({"project_id": project_id})
+            )
+
+            db.commit()
+
+            return {"scheduled": True, "job_id": my_job.id, "status": "success"}
+        return {
+            "scheduled": False,
+            "job_id": None,
+            "status": "file path does not exist",
+        }
+    return {"scheduled": False, "job_id": None, "status": "job-schedule id is existed"}
+
+
+def create_schedule_for_job(db, job_id, desc, time_in_seconds, Schedule):
+
+    rel_file_path = get_job_path(job_id)
+    full_path = PROJECTS_PATH / rel_file_path
+    project_schedule_id = (
+        rel_file_path.split(".")[0].replace("/", ".") + "_" + str(desc)
+    )
+
+    job_ids = [str(job.id) for job in Schedule.get_jobs()]
+
+    if project_schedule_id not in job_ids:
+        if full_path.exists():
+            my_job = Schedule.add_job(
+                aps_celery2,
+                "interval",  # cron
+                seconds=time_in_seconds,
+                id=project_schedule_id,
+                args=(rel_file_path, project_schedule_id),
+                # replace_existing=True
+            )
+
             schedule = (
                 db.query(APSchedulerJobsTable)
                 .filter(APSchedulerJobsTable.id == project_schedule_id)

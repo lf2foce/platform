@@ -23,6 +23,7 @@ from .auth.views import user_router
 from .report.views import router as report_router
 from .organization.views import router as org_router
 from .proj.views import router as project_router
+from .job.views import router as job_router
 from .team_projects.example.bigquery_example.views import router as bq_router
 from .team_projects.example.celery_example.views import router as celery_router
 from .team_projects.example.file_example.views import router as file_router
@@ -38,11 +39,11 @@ from .proj.tasks import create_task
 from .notification.service import send_slack_message
 from .utils.seeds import seed_example
 
-# Base.metadata.drop_all(engine)  # TODO phải bỏ ra khi deploy
+Base.metadata.drop_all(engine)  # TODO phải bỏ ra khi deploy
 
 # Base.metadata.create_all(bind=engine)  # fastapi docs, init create DB
 init_database(engine=engine)
-# seed_example()
+seed_example()
 
 app = FastAPI()
 
@@ -75,6 +76,7 @@ logger = logging.getLogger(__name__)
 app.include_router(schedule_router, prefix="/schedule", tags=["schedule"])
 app.include_router(user_router, prefix="/api/users", tags=["users"])
 app.include_router(project_router, prefix="/api/projects", tags=["projects"])
+app.include_router(job_router, prefix="/api/jobs", tags=["jobs"])
 
 app.include_router(report_router, prefix="/reports", tags=["reports"])
 app.include_router(slack_router, tags=["notification"])

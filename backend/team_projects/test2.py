@@ -1,1 +1,2 @@
-print("from test2")
+def main(params):
+    print(params)

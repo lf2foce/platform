@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Json
 
 
 class ProjectBase(BaseModel):
@@ -10,7 +10,7 @@ class ProjectBase(BaseModel):
 
 class ProjectCreate(ProjectBase):
     tags: Optional[str] = None  # separate by ;
-    scheduled_at: str
+    job_priority: List[int] = []
 
 
 class ProjectRead(ProjectBase):
