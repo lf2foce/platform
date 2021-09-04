@@ -10,7 +10,7 @@ class ProjectBase(BaseModel):
 
 class ProjectCreate(ProjectBase):
     tags: Optional[str] = None  # separate by ;
-    job_priority: List[int] = []
+    # job_priority: List[int] = []
 
 
 class ProjectRead(ProjectBase):

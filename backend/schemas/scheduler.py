@@ -43,3 +43,16 @@ class JobCreateDeleteResponse(BaseModel):
 
     class Config:
         schema_extra = {"example": {"scheduled": True, "job_id": "www.google.com"}}
+
+
+# from cronjob
+class IntervalScheduleCreate(BaseModel):
+    project_id: int
+    desc: str
+    time_in_seconds: int = 60
+
+
+class CronJobCreate(BaseModel):
+    file_id: int
+    desc: str
+    cron_string: str = "* * * * *"

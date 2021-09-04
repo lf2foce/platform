@@ -2,19 +2,23 @@ from typing import List, Optional
 from pydantic import BaseModel, Json, ValidationError
 
 
-class JobBase(BaseModel):
+class FileBase(BaseModel):
     name: str
     description: str
     run_path: str
-    job_params: dict
-    enabled: bool = True
+    is_params_required: bool = False
+    is_active: bool = True
 
 
-class JobCreate(JobBase):
+class FileCreate(FileBase):
     tags: Optional[str] = None  # separate by ;
 
 
-class JobRead(JobBase):
+class FileUpdate(FileBase):
+    file_params: Optional[dict] = {"params": "value"}
+
+
+class FileRead(FileBase):
     id: int
     author_id: int
 

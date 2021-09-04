@@ -12,36 +12,43 @@
     crossorigin="anonymous">
 </script>
 
+<style>
+  #cronString {
+    /* font-size: 1.5em; */
+    color: #5544FF;
+  }
+</style>
+
 {%endblock%}
 
 {%block content%}
 <br>
-<h1 class="display-6 mt-3">Projects</h1>
+<h1 class="display-6 mt-3">Jobs</h1>
 <br>
 
 
 
 
 <div class="row">
-  <div class="col-sm-3"><h6 class="text-muted">Project</h6></div>
+  <div class="col-sm-3"><h6 class="text-muted">File (~/team_projects/)</h6></div>
   <div class="col-sm-9">
     <div class="row">
-      <div class="col-sm-5"><h6 class="text-muted" >Next run</h6></div>
+      <div class="col-sm-5"><h6 class="text-muted" >Next run Job</h6></div>
 
       <div class="col-sm-7"><h6 class="text-muted">Action</h6></div>
     </div>
   </div>
   <hr>
 
-  {% for project in projects %}
+  {% for file in files %}
   <div class="col-sm-3 mb-3">
-    <h6>{{project.title}} </h6>
+    <h6>{{file.name}} </h6>
     
-    ~/team_projects/{{project.run_path}}<br>
-    {% if project.tags %}
-    {% for tag in project.tags.split(';') %}
-      <span class="badge bg-secondary rounded-pill">{{tag}}</span>
-    {% endfor %}
+    {{file.run_path}}<br>
+    {% if file.tags %}
+      {% for tag in file.tags.split(';') %}
+        <span class="badge bg-secondary rounded-pill">{{tag}}</span>
+      {% endfor %}
     {% endif %}
 
     
@@ -50,8 +57,8 @@
     <div class="row">
       <div class="col-sm-5">
         <ul class="nav flex-column">
-          {% for job_schedule in project.schedules %}
-            <li>{{job_schedule.id}}: <span id='{{job_schedule.id}}'><strong>{{job_schedule.next_run_time|datetime_format }}</strong></span></li>
+          {% for job in file.scheduled_jobs %}
+            <li>{{job.id}}: <span id='{{job.id}}'><strong>{{job.next_run_time|datetime_format }}</strong></span></li>
           {% endfor %} 
         </ul>
       </div>
@@ -60,9 +67,9 @@
           <span data-feather="play-circle"></span>
           Trigger
         </a>
-        <a class="card-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="{{project.project_id}}">
+        <a class="card-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="{{file.id}}">
           <span data-feather="clock"></span>
-          Scheduled
+          Schedule
         </a>
         <a class="card-link text-decoration-none" href="/users">
           <span data-feather="activity"></span>
@@ -92,19 +99,12 @@
       </div>
       <div class="modal-body">
         <div id="root"></div>
-        <form id='time_interval' action='/projects/'>
+        <form id='cron-form' action='/files/'>
           <div class="mb-3">
-
-            <br>
-
             <label for="schedule-desc" class="col-form-label">Description</label>
             <textarea class="form-control" id="schedule-desc"></textarea>
-            
           </div>
-          <div class="mb-3">
-            <label for="second-interval" class="col-form-label">Time interval</label>
-            <input type="text" class="form-control" id="second-interval">
-          </div>
+      
         </form>
       </div>
       <div class="modal-footer">
@@ -131,36 +131,33 @@
     var modalTitle = exampleModal.querySelector('.modal-title')
     var modalBodyInput = exampleModal.querySelector('.modal-body input')
 
-    modalTitle.textContent = 'Project ID ' + recipient
+    modalTitle.textContent = 'Job ID ' + recipient
     // modalBodyInput.value = recipient
 
     // submit from here
     var submitSchedule = document.getElementById("submit-schedule")
 
     submitSchedule.addEventListener("click", function(){ 
-      var secondsVar = document.getElementById('second-interval').value
       var scheduleDesc = document.getElementById('schedule-desc').value
+      var cronString = document.getElementById('cronString').value
 
-
-      console.log(secondsVar)
-      function sendProjectSchedule() {
-        fetch('/schedule/add_project/', {
+      console.log(scheduleDesc)
+      console.log(cronString)
+      
+        fetch('/schedule/add_cronjob/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ "project_id": recipient, "desc": scheduleDesc, "time_in_seconds": secondsVar }),
+          body: JSON.stringify({ "file_id": recipient, "desc": scheduleDesc, "cron_string": cronString}),
         })
         .then(response => response.json())
         .then(data => {
           // getStatus(data.task_id, data.task_name)
           console.log(data)
-          document.getElementById("time_interval").submit();
+          document.getElementById("cron-form").submit();
 
         })
-      }
-
-      sendProjectSchedule()
       
 
     })    
@@ -212,10 +209,12 @@
                 </select>
               </div>
               <div class="col-auto">
-                <input type="text"  name="firstName" onChange={ handleChange } value={name} class="form-control form-control-lg" />
+                <input type="text"  name="firstName" onChange={ handleChange } value={name} class="form-control form-control-lg" id="cronString" />
               </div>
-              <div class="col-auto">    
-                <h1 class="display-6"><mark><span id='cron descriptor'></span></mark></h1>
+              <div class="col-auto"> 
+                <p class="text-center">
+                  <h1 class="display-6" ><mark><span id='cron descriptor'></span></mark></h1>
+                </p>
               </div>
             </div>
             

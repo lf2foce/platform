@@ -11,4 +11,4 @@ def init_database(engine):
     with engine.connect() as connection:
         pass
 
-    Base.metadata.create_all(engine)
+    Base.metadata.create_all(bind=engine)

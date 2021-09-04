@@ -15,7 +15,7 @@ from .service import between_date_bq
 from pretty_html_table import build_table
 
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="backend/templates")
 
 router = APIRouter()
 
@@ -27,13 +27,13 @@ class SqlTemplateRequest(BaseModel):
     end_date: str = "2021-07-25"
 
 
-@router.get("/report", response_class=HTMLResponse)
-def report(request: Request):
+@router.get("/", response_class=HTMLResponse)
+def plotly_report(request: Request):
     return templates.TemplateResponse("report.html", {"request": request})
 
 
 @router.get("/sql-view", response_class=HTMLResponse)
-def report(request: Request):
+def sql_view(request: Request):
     query_temp = """
                 SELECT
                     COUNT(DISTINCT tcb_transaction_id) as total_transaction,
@@ -58,7 +58,7 @@ def report(request: Request):
 
 
 @router.post("/sql")
-def report(template: SqlTemplateRequest):
+def bq_post(template: SqlTemplateRequest):
     print(template)
     query_temp = """
                 SELECT COUNT(DISTINCT tcb_transaction_id) as total_transaction, SUM(amount) as total_amount

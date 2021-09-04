@@ -4,20 +4,26 @@ import logging
 from pytz import timezone
 from datetime import datetime, timedelta
 from pathlib import Path
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, Request, HTTPException, Body
 from sqlalchemy.orm import Session
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.triggers.cron import CronTrigger
 
 # from apscheduler.jobstores.redis import RedisJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from apscheduler.events import EVENT_JOB_ERROR
+from cron_descriptor import get_description, ExpressionDescriptor, CasingTypeEnum
+
 
 from backend.database.core import get_db
 from backend.schemas import scheduler as ss  # schedule schema
+from backend.schemas.scheduler import IntervalScheduleCreate, CronJobCreate
 from backend.proj.service import aps_celery1
 from ..config import SQLALCHEMY_DATABASE_URI, TIMEZONE
+from .service import create_cron_schedule_for_job
+from .service import create_schedule_for_project
 
 
 router = APIRouter()
@@ -82,6 +88,25 @@ async def pickle_schedule():
     logger.info("Disabled Schedule")
 
 
+@router.post("/cron_check/")
+def cron_check(payload=Body(...)):
+    cron_string = payload["cron_string"]
+    print(cron_string)
+
+    try:
+        # desc = get_description(cron_string)
+        descripter = ExpressionDescriptor(
+            expression=cron_string,
+            throw_exception_on_parse_error=True,
+            casing_type=CasingTypeEnum.Sentence,
+            use_24hour_time_format=True,
+        )
+        print(descripter)
+        return {"status": "success", "desc": descripter.get_description()}
+    except:
+        return {"status": "fail", "desc": "sai định dạng"}
+
+
 @router.get(
     "/show_schedules/",
     response_model=ss.CurrentScheduledJobsResponse,
@@ -115,18 +140,31 @@ async def add_daily_job(name):
     minute = exec_time.strftime("%M")
     # here to choose 'cron'
     # In addition, job_id can be set according to your own situation, it will be used for remove_job
-    just_add = Schedule.add_job(test_job, "cron", hour=hour, minute=minute, args=[name])
+    just_add = Schedule.add_job(
+        test_job,
+        "cron",
+        day_of_week="mon-fri",
+        hour=hour,
+        minute=minute,
+        # start_date="2021-06-30",
+        end_date="2021-12-31",
+        args=[name],
+    )
     return {"scheduled": True, "job_id": just_add.id}
 
 
-from .service import create_schedule_for_project
-from pydantic import BaseModel
-
-
-class IntervalScheduleCreate(BaseModel):
-    project_id: int
-    desc: str
-    time_in_seconds: int = 60
+@router.post(
+    "/add_cronjob/", response_model=ss.JobCreateDeleteResponse, tags=["schedule"]
+)
+async def add_cronjob(cron_schedule: CronJobCreate, db: Session = Depends(get_db)):
+    scheduled_job = create_cron_schedule_for_job(
+        db=db,
+        file_id=cron_schedule.file_id,
+        desc=cron_schedule.desc,
+        cron_string=cron_schedule.cron_string,
+        Schedule=Schedule,
+    )
+    return scheduled_job
 
 
 @router.post(
@@ -141,14 +179,14 @@ def add_project_interval(
     interval_schedule: IntervalScheduleCreate,
     db: Session = Depends(get_db),
 ):
-    project_schedule = create_schedule_for_project(
+    scheduled_project = create_schedule_for_project(
         db=db,
         project_id=interval_schedule.project_id,
         desc=interval_schedule.desc,
         time_in_seconds=interval_schedule.time_in_seconds,
         Schedule=Schedule,
     )
-    return project_schedule
+    return scheduled_project
 
 
 @router.delete(

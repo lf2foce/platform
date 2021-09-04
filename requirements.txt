@@ -41,3 +41,4 @@ slugify
 pretty_html_table
 sqlparse
 pymysql
+cron-descriptor

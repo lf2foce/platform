@@ -54,7 +54,7 @@ class User(Base, TimeStampMixin):
 
     items = relationship("Item", back_populates="owner")
     projects = relationship("Project", back_populates="proj_owner")
-    jobs = relationship("Job", back_populates="author")
+    files = relationship("File", back_populates="author")
 
 
 class Item(Base, TimeStampMixin):
@@ -69,14 +69,14 @@ class Item(Base, TimeStampMixin):
     owner = relationship("User", back_populates="items")
 
 
-assoc_projects_jobs = Table(
-    "assoc_projects_jobs",
+assoc_projects_files = Table(
+    "assoc_projects_files",
     Base.metadata,
     Column(
         "project_id", Integer, ForeignKey("projects.project_id", ondelete="CASCADE")
     ),
-    Column("job_id", Integer, ForeignKey("jobs.id", ondelete="CASCADE")),
-    PrimaryKeyConstraint("project_id", "job_id"),
+    Column("file_id", Integer, ForeignKey("files.id", ondelete="CASCADE")),
+    PrimaryKeyConstraint("project_id", "file_id"),
 )
 
 
@@ -87,9 +87,9 @@ class Project(Base, TimeStampMixin):
     project_id = Column(Integer, primary_key=True, index=True)  # , autoincrement=True
     title = Column(String(255), index=True)
     run_path = Column(String(50), index=True, unique=True, nullable=False)
-    job_sequence = Column(Boolean, default=True)  #
-    # job_priority = Column(Text)
-    job_priority = Column(JSON)
+    file_sequence = Column(Boolean, default=True)  #
+    # file_priority = Column(Text)
+    file_priority = Column(JSON)
     description = Column(Text)
     tags = Column(Text)
     project_code = Column(String(255))
@@ -100,31 +100,33 @@ class Project(Base, TimeStampMixin):
     schedules = relationship("APSchedulerJobsTable", back_populates="schedule_owner")
     # many to many
     children = relationship(
-        "Job", secondary=assoc_projects_jobs, back_populates="parents"
+        "File", secondary=assoc_projects_files, back_populates="parents"
     )
 
 
-class Job(Base, TimeStampMixin):
-    __tablename__ = "jobs"
+class File(Base, TimeStampMixin):
+    __tablename__ = "files"
     # __table_args__ = {"schema": "oa_platform"}
 
     id = Column(Integer, primary_key=True, index=True)  # , autoincrement=True
     name = Column(String(255), index=True)
     run_path = Column(String(50), index=True, unique=True, nullable=False)
     description = Column(Text)
-    job_params = Column(JSON)
+    file_params = Column(JSON)
     tags = Column(Text)
-    job_code = Column(String(255))
-    enabled = Column(Boolean, default=True)
+    file_code = Column(String(255))
+    is_active = Column(Boolean, default=True)
 
     author_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    author = relationship("User", back_populates="jobs")
+    author = relationship("User", back_populates="files")
 
-    schedules = relationship("APSchedulerJobsTable", back_populates="scheduled_job")
+    scheduled_jobs = relationship(
+        "APSchedulerJobsTable", back_populates="scheduled_file"
+    )
 
     # many to many
     parents = relationship(
-        "Project", secondary=assoc_projects_jobs, back_populates="children"
+        "Project", secondary=assoc_projects_files, back_populates="children"
     )
 
 
@@ -140,11 +142,11 @@ class APSchedulerJobsTable(Base):
     desc = Column(String(255))
     tag = Column(String(255))
     project_id = Column(Integer, ForeignKey("projects.project_id", ondelete="CASCADE"))
-    job_id = Column(Integer, ForeignKey("jobs.id", ondelete="CASCADE"))
-    created_at = Column(DateTime)  # default=datetime.utcnow
+    file_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"))
+    created_at = Column(DateTime, default=datetime.now)  # default=datetime.utcnow
 
     schedule_owner = relationship("Project", back_populates="schedules")
-    scheduled_job = relationship("Job", back_populates="schedules")
+    scheduled_file = relationship("File", back_populates="scheduled_jobs")
 
 
 class Organization(Base):
