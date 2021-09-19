@@ -1,5 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel, Json, ValidationError
+from .scheduler import CronJobRead
 
 
 class FileBase(BaseModel):
@@ -21,6 +22,7 @@ class FileUpdate(FileBase):
 class FileRead(FileBase):
     id: int
     author_id: int
+    scheduled_jobs: List[CronJobRead] = []
 
     class Config:
         orm_mode = True

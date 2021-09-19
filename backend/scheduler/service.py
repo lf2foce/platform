@@ -16,6 +16,21 @@ def get_project_path(project_id: int):
     return current_project.run_path
 
 
+def get_job_from_id(file_id, desc, db):
+    rel_file_path = get_file_path(file_id)
+
+    project_schedule_id = (
+        rel_file_path.split(".")[0].replace("/", ".") + "_" + str(desc)
+    )
+
+    job = (
+        db.query(APSchedulerJobsTable)
+        .filter(APSchedulerJobsTable.id == project_schedule_id)
+        .first()
+    )
+    return job
+
+
 def get_file_path(file_id: int):
     db = SessionLocal()
     current_file = db.query(File).filter(File.id == file_id).first()

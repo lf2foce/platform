@@ -56,3 +56,12 @@ class CronJobCreate(BaseModel):
     file_id: int
     desc: str
     cron_string: str = "* * * * *"
+
+
+class CronJobRead(BaseModel):
+    id: str
+    file_id: int
+    next_run_time: str
+
+    class Config:
+        orm_mode = True

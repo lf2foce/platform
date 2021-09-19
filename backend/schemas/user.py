@@ -6,6 +6,7 @@ from pydantic import validator, Field
 import bcrypt
 from .item import Item
 from .project import ProjectRead
+from .file import FileRead
 
 
 def hash_password(password: str):
@@ -73,6 +74,7 @@ class User(UserBase):
     is_active: bool
     items: List[Item] = []
     projects: List[ProjectRead] = []
+    files: List[FileRead] = []
 
     class Config:
         orm_mode = True

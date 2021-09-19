@@ -5,12 +5,16 @@
 <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
 <!-- Don't use this in production: -->
-<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 <script
-    src="https://code.jquery.com/jquery-3.6.0.min.js"
-    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-    crossorigin="anonymous">
-</script>
+  src="https://unpkg.com/react-bootstrap@next/dist/react-bootstrap.min.js"
+  crossorigin></script>
+  
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+
+
+<script>var Alert = ReactBootstrap.Alert;</script>
+
 
 <style>
   #cronString {
@@ -155,7 +159,8 @@
         .then(data => {
           // getStatus(data.task_id, data.task_name)
           console.log(data)
-          document.getElementById("cron-form").submit();
+          // document.getElementById("cron-form").submit();
+          location.reload(true);
 
         })
       
@@ -170,31 +175,48 @@
 // cron
   function App() {
       const [name, setName] = React.useState('* * * * *')
+      const [disabled, setDisabled] = React.useState(false);
+      React.useEffect(() => {
+        // after perform DOM update
+        document.title = `Cron: ${name}`;
 
-      function handleChange(event) {
-          setName(event.target.value);
-          //console.log(name)  không ra đc luôn {name}
-      }
-
-      fetch('http://localhost:8000/schedule/cron_check', {
+        fetch('http://localhost:8000/schedule/cron_check', {
           method: 'POST', 
           headers: {
               'Content-Type': 'application/json',
           },
           // body: JSON.stringify(date_params),
           body: JSON.stringify({'cron_string': name})
-          })
-      .then(response => response.json())
-      .then(data => {
-          console.log('Success:', data);
-          
-          const desc = document.getElementById("cron descriptor");
-          desc.innerHTML = `"${data['desc']}"`
-      })
-      .catch((error) => {
-          console.error('Error:', error);
-      });
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            
+            const desc = document.getElementById("cron descriptor");
+            desc.innerHTML = `"${data['desc']}"`    
 
+            if (data['status'] === 'fail') {
+              setDisabled(true);
+            } else {
+              setDisabled(false);
+            }
+            
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            
+        });
+      });
+      function handleChange(event) {
+          setName(event.target.value);
+          //console.log(name)  không ra đc luôn {name}
+      }
+
+      function handleSubmitCronClick() {
+        console.log('click')
+        // fetch api here
+      }
+      
       
       return (
           <div>
@@ -218,6 +240,9 @@
               </div>
             </div>
             
+          
+            <button disabled={disabled} onClick={handleSubmitCronClick} class='btn btn-primary'>Submit</button>
+              
           </div>
       )
   }

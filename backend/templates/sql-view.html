@@ -118,13 +118,15 @@ base16/dracula
 <script>hljs.highlightAll();</script>
 <script>
     // const query = document.getElementById("template-query")
-    const run_query = document.getElementById("run")
-    const sql_result = document.getElementById("sql-result")
-    const startDate = document.getElementById("start-date").value
-    const endDate = document.getElementById("end-date").value
     
-    console.log(startDate)
+    const run_query = document.getElementById("run")
     run_query.addEventListener("click", function(){  
+        
+        let sql_result = document.getElementById("sql-result")
+        let startDate = document.getElementById("start-date").value
+        let endDate = document.getElementById("end-date").value
+
+        console.log(startDate)
 
         // snippet mozilla
         const date_params = { start_date: startDate, end_date: endDate };
@@ -138,6 +140,7 @@ base16/dracula
             })
         .then(response => response.json())
         .then(data => {
+
             console.log('Success:', data);
             const query1 = document.getElementById("test");
             query1.textContent = data['a']

@@ -13,6 +13,7 @@ app = Celery(
     include=[
         "backend.proj.tasks",
         "backend.proj.service",
+        "backend.file.service",
         "backend.team_projects.example.celery_example.service",
         "backend.notification.service",
     ],

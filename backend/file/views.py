@@ -10,17 +10,18 @@ from sqlalchemy.orm import Session
 from backend.database.core import get_db
 from backend.database.models import File
 from backend.schemas.file import FileRead, FileCreate
-from .service import run_file_scheduler, create_user_file
+from .service import run_file_scheduler, create_user_file, get_files
 
 templates = Jinja2Templates(directory="templates")
 
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", response_model=List[FileRead])
 def file_info(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    file = db.query(File).offset(skip).limit(limit).all()
-    return file
+    # file = db.query(File).offset(skip).limit(limit).all()
+    files = get_files(db=db, skip=skip, limit=limit)
+    return files
 
 
 @router.post("/{user_id}/files/", response_model=FileRead)

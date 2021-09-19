@@ -22,8 +22,11 @@ from backend.schemas import scheduler as ss  # schedule schema
 from backend.schemas.scheduler import IntervalScheduleCreate, CronJobCreate
 from backend.proj.service import aps_celery1
 from ..config import SQLALCHEMY_DATABASE_URI, TIMEZONE
-from .service import create_cron_schedule_for_job
-from .service import create_schedule_for_project
+from .service import (
+    create_cron_schedule_for_job,
+    create_schedule_for_project,
+    get_job_from_id,
+)
 
 
 router = APIRouter()
@@ -86,6 +89,15 @@ async def pickle_schedule():
     global Schedule
     Schedule.shutdown()
     logger.info("Disabled Schedule")
+
+
+@router.post("/job_id_check/")
+def is_job_exists(payload=Body(...), db: Session = Depends(get_db)):
+    job = get_job_from_id(payload["file_id"], payload["desc"], db)
+    if job:
+        return {"status": "existed"}
+    else:
+        return {"status": "not existed"}
 
 
 @router.post("/cron_check/")

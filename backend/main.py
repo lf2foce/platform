@@ -23,10 +23,9 @@ from .auth.views import user_router
 from .report.views import router as report_router
 from .organization.views import router as org_router
 from .proj.views import router as project_router
-from .file.views import router as job_router
+from .file.views import router as file_router
 from .team_projects.example.bigquery_example.views import router as bq_router
 from .team_projects.example.celery_example.views import router as celery_router
-from .team_projects.example.file_example.views import router as file_router
 from .notification.views import router as slack_router
 
 from .database.core import SessionLocal, engine, Base, get_db
@@ -38,11 +37,11 @@ from .proj.celery import app as celery_app
 from .proj.tasks import create_task
 from .notification.service import send_slack_message
 
-Base.metadata.drop_all(engine)  # TODO phải bỏ ra khi deploy
+# Base.metadata.drop_all(engine)  # TODO phải bỏ ra khi deploy
 
 # Base.metadata.create_all(bind=engine)  # fastapi docs, init create DB
 init_database(engine=engine)
-seed_example()
+# seed_example()
 
 app = FastAPI()
 
@@ -86,7 +85,6 @@ app.include_router(org_router, prefix="/api/orgs")
 # example
 app.include_router(bq_router, tags=["bigquery", "example"])
 app.include_router(celery_router, tags=["example"])
-app.include_router(file_router, tags=["example"])
 
 
 @app.get("/event-api", response_class=HTMLResponse)
