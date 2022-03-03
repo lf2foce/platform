@@ -172,5 +172,32 @@ async def favicon():
     return "backend/storage/assets/image/ironman.ico"
 
 
+@app.get("/api/recipes")
+def recipes():
+    recipes = [
+        {
+            "id": 1,
+            "title": "Hank’s Juiciest Beef Burger",
+            "image": "https://tailwindcss.com/_next/static/media/jucy-beef-burger.346917d5ccb0b705233bb1665ffb63f6.jpg",
+            "time": "20",
+            "difficulty": "Easy",
+            "servings": "4",
+            "author": "Hank Douglas",
+            "rating": 4,
+        },
+        {
+            "id": 2,
+            "title": "Hank’s Juiciest Beef Burger",
+            "image": "https://tailwindcss.com/_next/static/media/chicken-sandwich.8073c172870d9f66de9e2065797d611b.jpg",
+            "time": 30,
+            "difficulty": "Easy",
+            "servings": 3,
+            "author": "Hank Douglas",
+            "rating": 5,
+        },
+    ]
+    return recipes
+
+
 # if __name__ == "__main__":
 #     uvicorn.run(app, host="0.0.0.0", port=80)
